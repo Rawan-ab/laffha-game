@@ -1,27 +1,51 @@
-/* V23 — cleaner setup header on laptop, TV and mobile */
-.setup-hero-head{margin:0 0 12px!important;padding-top:2px!important;gap:0!important}
-.setup-logo-wrap{padding-inline:42px!important;margin:0 auto 8px!important;line-height:1!important}
-.setup-logo{font-size:clamp(54px,4.7vw,74px)!important;line-height:.9!important;letter-spacing:-3px!important}
-.spark{font-size:26px!important}.spark-a{left:9px!important;top:9px!important}.spark-b{right:9px!important;bottom:3px!important;font-size:21px!important}
-.setup-tagline{font-size:clamp(13px,1.05vw,16px)!important;line-height:1.6!important;font-weight:700!important;margin:0!important;white-space:nowrap!important}
+/* V24 — clearly compact setup header */
+.setup-hero-head{
+  margin:0 0 8px!important;
+  padding:0!important;
+  min-height:0!important;
+  gap:0!important;
+}
+.setup-logo-wrap{
+  padding-inline:30px!important;
+  margin:0 auto 4px!important;
+  line-height:1!important;
+}
+.setup-logo{
+  font-size:clamp(44px,3.4vw,58px)!important;
+  line-height:.86!important;
+  letter-spacing:-2px!important;
+}
+.spark{font-size:19px!important}
+.spark-a{left:5px!important;top:6px!important}
+.spark-b{right:5px!important;bottom:1px!important;font-size:16px!important}
+.setup-tagline{
+  font-size:clamp(11px,.82vw,14px)!important;
+  line-height:1.35!important;
+  font-weight:700!important;
+  margin:0!important;
+  white-space:nowrap!important;
+}
 .setup-tagline b{font-weight:800!important}
 
+/* Pull the controls closer to the compact header */
+.setup-controls-top{margin-top:4px!important}
+
 @media (min-width:1600px){
-  .setup-logo{font-size:78px!important}
-  .setup-tagline{font-size:17px!important}
+  .setup-logo{font-size:62px!important}
+  .setup-tagline{font-size:14px!important}
 }
 
 @media (max-width:900px){
-  .setup-hero-head{margin-bottom:12px!important}
-  .setup-logo-wrap{padding-inline:30px!important;margin-bottom:7px!important}
-  .setup-logo{font-size:clamp(48px,11vw,62px)!important;letter-spacing:-2px!important}
-  .spark{font-size:20px!important}.spark-b{font-size:17px!important}
-  .setup-tagline{font-size:13px!important;white-space:normal!important;max-width:360px!important;text-align:center!important}
+  .setup-hero-head{margin-bottom:9px!important}
+  .setup-logo-wrap{padding-inline:24px!important;margin-bottom:5px!important}
+  .setup-logo{font-size:clamp(42px,10vw,52px)!important;letter-spacing:-1.5px!important}
+  .spark{font-size:16px!important}.spark-b{font-size:13px!important}
+  .setup-tagline{font-size:12px!important;white-space:normal!important;max-width:330px!important;text-align:center!important;line-height:1.45!important}
 }
 
 @media (max-width:520px){
-  .setup-logo-wrap{padding-inline:24px!important}
-  .setup-logo{font-size:46px!important}
-  .setup-tagline{font-size:11.5px!important;line-height:1.55!important;max-width:300px!important}
-  .spark{font-size:17px!important}.spark-b{font-size:14px!important}
+  .setup-logo-wrap{padding-inline:20px!important}
+  .setup-logo{font-size:40px!important}
+  .setup-tagline{font-size:10.5px!important;max-width:285px!important}
+  .spark{font-size:14px!important}.spark-b{font-size:12px!important}
 }
