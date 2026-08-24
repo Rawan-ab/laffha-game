@@ -1,24 +1,24 @@
-// V27 — content diversity picker.
-// Keeps repeat protection, but also avoids drawing the same region/topic/era back-to-back.
+// V29 — content diversity picker for every category.
+// Repeat protection + region/topic/era balancing keeps consecutive questions feeling different.
 (function(){
-  const META_KEY='laffha-question-meta-v27';
+  const META_KEY='laffha-question-meta-v29';
   function loadMeta(){try{return JSON.parse(localStorage.getItem(META_KEY)||'{}')||{};}catch(e){return {};}}
   function saveMeta(m){try{localStorage.setItem(META_KEY,JSON.stringify(m));}catch(e){}}
-  function metaFor(q){return {region:q.regionTag||q.countryRegionTags?.[0]||'Other',sub:q.subCategory||'other',era:q.eraTag||'Any',id:q.questionID||''};}
-  function rememberMeta(q){const all=loadMeta(),cat=q.category,m=metaFor(q);const arr=Array.isArray(all[cat])?all[cat]:[];all[cat]=[...arr,m].slice(-12);saveMeta(all);}
+  function metaFor(q){return {region:q.regionTag||q.countryRegionTags?.[0]||'Other',sub:q.subCategory||'other',era:q.eraTag||'Any',answer:String(q.correctAnswer||''),id:q.questionID||''};}
+  function rememberMeta(q){const all=loadMeta(),cat=q.category,m=metaFor(q);const arr=Array.isArray(all[cat])?all[cat]:[];all[cat]=[...arr,m].slice(-14);saveMeta(all);}
   function diversifiedPick(pool,cat){
     if(pool.length<=1)return pool[0];
-    const hist=(loadMeta()[cat]||[]).slice(-4),last=hist[hist.length-1]||{},prev=hist[hist.length-2]||{};
+    const hist=(loadMeta()[cat]||[]).slice(-5),last=hist[hist.length-1]||{},prev=hist[hist.length-2]||{};
     const scored=pool.map(q=>{const m=metaFor(q);let score=Math.random()*4;
-      if(m.region!==last.region)score+=7;else score-=7;
+      if(m.region!==last.region)score+=8;else score-=8;
       if(m.region!==prev.region)score+=3;
       if(m.sub!==last.sub)score+=5;else score-=3;
       if(m.era!==last.era)score+=2;
-      // New curated banks have explicit metadata. Prefer them without fully excluding legacy questions.
-      if((cat==='tv'||cat==='general')&&q.regionTag&&q.subCategory)score+=4;
+      if(m.answer&&m.answer!==last.answer)score+=2;else if(m.answer)score-=4;
+      if(q.regionTag&&q.subCategory)score+=4;
       return {q,score};
     }).sort((a,b)=>b.score-a.score);
-    const top=scored.slice(0,Math.max(2,Math.ceil(scored.length*.35)));
+    const top=scored.slice(0,Math.max(2,Math.ceil(scored.length*.30)));
     return top[Math.floor(Math.random()*top.length)].q;
   }
 
