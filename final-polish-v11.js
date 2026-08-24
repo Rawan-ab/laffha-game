@@ -75,7 +75,7 @@ function buildChoiceAssist(q){
   const candidates=QUESTIONS.filter(x=>x.questionID!==q.questionID&&x.category===q.category&&x.correctAnswer&&x.correctAnswer!==q.correctAnswer).map(x=>x.correctAnswer).filter((x,i,a)=>a.indexOf(x)===i&&!own.includes(x));
   return [...own,...candidates.sort(()=>Math.random()-.5)].slice(0,3);
 }
-function finalReveal(q){return `<div class="reveal-answer-wrap"><button class="btn btn-primary" id="revealAnswer">إظهار الجواب</button><div id="revealedAnswer" style="display:none"><div class="answer-label">الجواب الصحيح</div><div class="revealed-text">${q.correctAnswer}</div><div class="direct-actions"><button class="btn correct-btn" id="correct">✓ جاوبوا صح</button><button class="btn wrong-btn" id="wrong">✕ ما عرفوه</button></div></div></div>`;}
+function finalReveal(q){return `<div class="reveal-answer-wrap"><button class="btn btn-primary" id="revealAnswer">إظهار الجواب</button><div id="revealedAnswer" style="display:none"><div class="answer-label">الجواب الصحيح</div><div class="revealed-text">${q.correctAnswer}</div><div class="direct-actions"><button class="btn correct-btn" id="correct">✓  صح</button><button class="btn wrong-btn" id="wrong">✕ خطاء </button></div></div></div>`;}
 function finalLogo(q){if(q.mediaURL)return `<div class="logo-question"><div class="logo-media"><img src="${q.mediaURL}" alt="" onerror="this.parentElement.innerHTML='<div class=&quot;logo-fallback&quot;>${q.logoText||'؟'}</div>'"></div></div>`;return `<div class="logo-question"><div class="logo-fallback">${q.logoText||'؟'}</div>${q.logoSub?`<div class="logo-sub">${q.logoSub}</div>`:''}</div>`;}
 
 question=function(){
