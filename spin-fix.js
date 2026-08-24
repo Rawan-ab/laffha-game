@@ -1,13 +1,13 @@
-// Stable category roulette: cards stay visible, the selected category is highlighted,
-// then the game always goes to the points screen before showing a question.
+// Stable category roulette: cards stay visible, the selected category remains visible in color,
+// then the player explicitly continues to the points screen.
 spin = function(){
   const cats=state.categories.map(k=>[k,CATS[k]]);
   gameLayout(`
     <div class="spin-copy">
-      <div class="turn-label">اختاروا الفئة</div>
-      <h2>اسحبوا لتحديد الفئة العشوائية</h2>
+      <div class="turn-label">الفئة العشوائية</div>
+      <h2>اسحبوا لتحديد الفئة</h2>
     </div>
-    <div class="reel-shell">
+    <div class="reel-shell" id="reelShell">
       <div class="reel-pointer"></div>
       <div class="reel-window" id="reelWindow">
         <div class="reel-track stable-track" id="reelTrack">
@@ -15,14 +15,18 @@ spin = function(){
         </div>
       </div>
     </div>
+    <div id="chosenCategory"></div>
     <button class="spin-action" id="spinBtn">اسحب الآن</button>
     <div class="rule-strip"><span>🛡️ السؤال ما ينتقل</span><span>❌ الخطأ ينهي السؤال</span><span>⏱️ 60 ثانية</span></div>
   `);
 
   const btn=document.getElementById('spinBtn');
   const items=[...document.querySelectorAll('.reel-item')];
+  const chosenBox=document.getElementById('chosenCategory');
+
   btn.onclick=()=>{
     btn.disabled=true;
+    chosenBox.innerHTML='';
     let steps=18+Math.floor(Math.random()*10);
     let current=0;
     const timer=setInterval(()=>{
@@ -33,8 +37,20 @@ spin = function(){
       if(steps<=0){
         clearInterval(timer);
         const chosen=items[(current-1)%items.length];
-        state.selectedCategory=chosen.dataset.key;
-        setTimeout(()=>{state.screen='difficulty';render();},450);
+        const key=chosen.dataset.key;
+        const c=CATS[key];
+        state.selectedCategory=key;
+        items.forEach(x=>x.classList.remove('reel-active'));
+        chosen.classList.add('reel-active');
+        chosenBox.innerHTML=`
+          <div class="chosen-category-card" style="background:${c.color}">
+            <span class="chosen-category-emoji">${c.emoji}</span>
+            <strong>${c.name}</strong>
+          </div>
+        `;
+        btn.textContent='اختاروا النقاط';
+        btn.disabled=false;
+        btn.onclick=()=>{state.screen='difficulty';render();};
       }
     },95);
   };
