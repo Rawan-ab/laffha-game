@@ -1,12 +1,14 @@
-// V19 setup: closely match the supplied reference layout.
+// V20 setup: refined spacing, clear logo/title separation, roomier helper cards.
 home=function(){state.screen='setup';setup();};
 setup=function(){
   if(!state.teams.length)resetTeams();
   const classByKey={tv:'cat-blue',movies:'cat-coral',songs:'cat-yellow',artists:'cat-purple',cartoons:'cat-violet',sports:'cat-green',general:'cat-lilac',logos:'cat-pink'};
   shell(`<div class="setup-page-v16">
     <main class="card setup-card setup-reference">
-      <div class="setup-logo-wrap"><span class="spark spark-a">✦</span><div class="setup-logo">لفّها</div><span class="spark spark-b">✦</span></div>
-      <div class="setup-tagline">اختاروا التحدي، <b>فكروا بسرعة</b>، والعبوا للفوز!</div>
+      <div class="setup-hero-head">
+        <div class="setup-logo-wrap"><span class="spark spark-a">✦</span><div class="setup-logo">لفّها</div><span class="spark spark-b">✦</span></div>
+        <div class="setup-tagline">اختاروا التحدي، <b>فكروا بسرعة</b>، والعبوا للفوز!</div>
+      </div>
 
       <div class="setup-controls-top">
         <div class="field setup-field-reference team-count-field"><h3 class="section-title">عدد الفرق</h3><div class="choice-row setup-choice-row">${[2,3,4,5,6].map(n=>`<button class="choice ${state.teamCount===n?'active':''}" data-teamcount="${n}">${n}</button>`).join('')}</div></div>
@@ -31,10 +33,10 @@ setup=function(){
       </div>
       <div class="side-divider"></div>
       <h3>المساعدات</h3>
-      <div class="assist-side-item"><span class="assist-icon">🔄</span><div><b>غير السؤال</b><small>يبدّل السؤال بسؤال آخر من نفس الفئة والمستوى</small></div><em>2 متبقية</em></div>
-      <div class="assist-side-item"><span class="assist-icon">✂️</span><div><b>50/50</b><small>يحذف خيارين خطأ في أسئلة الاختيارات</small></div><em>2 متبقية</em></div>
-      <div class="assist-side-item"><span class="assist-icon">💡</span><div><b>تلميح</b><small>يعطيكم معلومة تساعد على الوصول للإجابة</small></div><em>2 متبقية</em></div>
-      <div class="assist-side-item assist-choice"><span class="assist-icon">➕</span><div><b>إضافة خيارات</b><small>تحوّل السؤال المفتوح إلى 4 خيارات، وتصبح قيمته 50 نقطة</small></div><em>2 متبقية</em></div>
+      <div class="assist-side-item"><span class="assist-icon">🔄</span><div><b>غير السؤال</b><small>يبدّل السؤال بسؤال آخر من نفس الفئة والمستوى</small></div></div>
+      <div class="assist-side-item"><span class="assist-icon">✂️</span><div><b>50/50</b><small>يحذف خيارين خطأ في أسئلة الاختيارات</small></div></div>
+      <div class="assist-side-item"><span class="assist-icon">💡</span><div><b>تلميح</b><small>يعطيكم معلومة تساعد على الوصول للإجابة</small></div></div>
+      <div class="assist-side-item assist-choice"><span class="assist-icon">➕</span><div><b>إضافة خيارات</b><small>تحوّل السؤال المفتوح إلى 4 خيارات، وتصبح قيمته 50 نقطة</small></div></div>
     </aside>
   </div>`);
 
