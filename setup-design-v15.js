@@ -1,4 +1,4 @@
-// V20 setup: refined spacing, clear logo/title separation, roomier helper cards.
+// V21 setup: refined spacing, clear logo/title separation, roomier helper cards.
 home=function(){state.screen='setup';setup();};
 setup=function(){
   if(!state.teams.length)resetTeams();
@@ -39,6 +39,9 @@ setup=function(){
       <div class="assist-side-item assist-choice"><span class="assist-icon">➕</span><div><b>إضافة خيارات</b><small>تحوّل السؤال المفتوح إلى 4 خيارات، وتصبح قيمته 50 نقطة</small></div></div>
     </aside>
   </div>`);
+
+  const setupTopbar=document.querySelector('.topbar');
+  if(setupTopbar) setupTopbar.remove();
 
   document.querySelectorAll('[data-teamcount]').forEach(b=>b.onclick=()=>{state.teamCount=+b.dataset.teamcount;resetTeams();render();});
   document.querySelectorAll('[data-rounds]').forEach(b=>b.onclick=()=>{state.rounds=+b.dataset.rounds;render();});
