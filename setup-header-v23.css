@@ -1,51 +1,75 @@
-/* V24 — clearly compact setup header */
+/* V25 — small side logo + compact opening line */
 .setup-hero-head{
+  position:relative!important;
+  display:block!important;
+  min-height:42px!important;
   margin:0 0 8px!important;
-  padding:0!important;
-  min-height:0!important;
-  gap:0!important;
+  padding:0 84px 0 84px!important;
 }
+
+/* Keep Laffha as a small side brand, like the old header */
 .setup-logo-wrap{
-  padding-inline:30px!important;
-  margin:0 auto 4px!important;
+  position:absolute!important;
+  top:-4px!important;
+  right:4px!important;
+  left:auto!important;
+  margin:0!important;
+  padding:0!important;
+  width:auto!important;
   line-height:1!important;
 }
 .setup-logo{
-  font-size:clamp(44px,3.4vw,58px)!important;
-  line-height:.86!important;
-  letter-spacing:-2px!important;
-}
-.spark{font-size:19px!important}
-.spark-a{left:5px!important;top:6px!important}
-.spark-b{right:5px!important;bottom:1px!important;font-size:16px!important}
-.setup-tagline{
-  font-size:clamp(11px,.82vw,14px)!important;
-  line-height:1.35!important;
-  font-weight:700!important;
-  margin:0!important;
+  font-size:30px!important;
+  line-height:1!important;
+  letter-spacing:-1px!important;
   white-space:nowrap!important;
 }
-.setup-tagline b{font-weight:800!important}
+.spark{display:none!important}
 
-/* Pull the controls closer to the compact header */
-.setup-controls-top{margin-top:4px!important}
+/* Opening line becomes the real page header */
+.setup-tagline{
+  display:block!important;
+  width:100%!important;
+  max-width:none!important;
+  margin:-2px auto 0!important;
+  text-align:center!important;
+  font-size:17px!important;
+  line-height:1.35!important;
+  font-weight:750!important;
+  white-space:nowrap!important;
+  color:var(--ink)!important;
+}
+.setup-tagline b{font-weight:800!important;color:#db5953!important}
+
+/* Pull the settings upward */
+.setup-controls-top{margin-top:-2px!important}
 
 @media (min-width:1600px){
-  .setup-logo{font-size:62px!important}
-  .setup-tagline{font-size:14px!important}
+  .setup-hero-head{min-height:44px!important;padding-inline:96px!important}
+  .setup-logo{font-size:32px!important}
+  .setup-tagline{font-size:18px!important}
 }
 
 @media (max-width:900px){
-  .setup-hero-head{margin-bottom:9px!important}
-  .setup-logo-wrap{padding-inline:24px!important;margin-bottom:5px!important}
-  .setup-logo{font-size:clamp(42px,10vw,52px)!important;letter-spacing:-1.5px!important}
-  .spark{font-size:16px!important}.spark-b{font-size:13px!important}
-  .setup-tagline{font-size:12px!important;white-space:normal!important;max-width:330px!important;text-align:center!important;line-height:1.45!important}
+  .setup-hero-head{
+    min-height:48px!important;
+    margin-bottom:9px!important;
+    padding:0 72px 0 8px!important;
+  }
+  .setup-logo-wrap{top:0!important;right:4px!important}
+  .setup-logo{font-size:27px!important}
+  .setup-tagline{
+    margin:0!important;
+    font-size:13px!important;
+    line-height:1.45!important;
+    white-space:normal!important;
+    text-align:right!important;
+    padding-top:2px!important;
+  }
 }
 
 @media (max-width:520px){
-  .setup-logo-wrap{padding-inline:20px!important}
-  .setup-logo{font-size:40px!important}
-  .setup-tagline{font-size:10.5px!important;max-width:285px!important}
-  .spark{font-size:14px!important}.spark-b{font-size:12px!important}
+  .setup-hero-head{min-height:52px!important;padding-right:64px!important;padding-left:2px!important}
+  .setup-logo{font-size:25px!important}
+  .setup-tagline{font-size:11.5px!important;line-height:1.5!important}
 }
