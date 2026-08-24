@@ -1,16 +1,13 @@
 // Stable gameplay patch: reel -> selected category -> points -> question.
-// Also removes true/false and makes logo questions open-answer only.
+// Also removes true/false and makes open-answer questions reveal the answer before scoring.
 
-// 1) Never allow true/false questions into the playable bank.
 for (let i = QUESTIONS.length - 1; i >= 0; i--) {
   if (QUESTIONS[i].questionType === 'truefalse') QUESTIONS.splice(i, 1);
 }
 
-// 2) Add a dedicated logos category.
 CATS.logos = {name:'شعارات', emoji:'🔎', color:'#efacd0'};
 if (!state.categories.includes('logos')) state.categories.push('logos');
 
-// 3) Add clear logo questions. No answer choices are shown for this type.
 QUESTIONS.push(
   {questionID:'logo-e-apple',category:'logos',difficulty:'easy',points:200,questionType:'logo',questionText:'وش اسم هذا الشعار؟',correctAnswer:'Apple',wrongAnswers:[],hint:'شركة تقنية أمريكية.',mediaURL:'https://cdn.simpleicons.org/apple/111111'},
   {questionID:'logo-e-netflix',category:'logos',difficulty:'easy',points:200,questionType:'logo',questionText:'وش اسم هذا الشعار؟',correctAnswer:'Netflix',wrongAnswers:[],hint:'منصة مشاهدة عالمية.',mediaURL:'https://cdn.simpleicons.org/netflix/E50914'},
@@ -20,29 +17,11 @@ QUESTIONS.push(
   {questionID:'logo-h-nike',category:'logos',difficulty:'hard',points:600,questionType:'logo',questionText:'وش اسم هذه العلامة؟',correctAnswer:'Nike',wrongAnswers:[],hint:'علامة رياضية أمريكية.',mediaURL:'https://cdn.simpleicons.org/nike/111111'}
 );
 
-// 4) Pick only a question from the category that the reel actually selected.
 pickQuestion = function(diff, excludeCurrent=false){
-  let pool = QUESTIONS.filter(q =>
-    q.questionType !== 'truefalse' &&
-    q.category === state.selectedCategory &&
-    q.difficulty === diff &&
-    !state.usedQuestions.has(q.questionID)
-  );
-  if (excludeCurrent && state.currentQuestion) {
-    pool = pool.filter(q => q.questionID !== state.currentQuestion.questionID);
-  }
-  if (!pool.length) {
-    pool = QUESTIONS.filter(q =>
-      q.questionType !== 'truefalse' &&
-      q.category === state.selectedCategory &&
-      q.difficulty === diff &&
-      (!excludeCurrent || q.questionID !== state.currentQuestion?.questionID)
-    );
-  }
-  if (!pool.length) {
-    toast('ما فيه سؤال متاح بهذا المستوى في هذه الفئة');
-    return;
-  }
+  let pool = QUESTIONS.filter(q => q.questionType !== 'truefalse' && q.category === state.selectedCategory && q.difficulty === diff && !state.usedQuestions.has(q.questionID));
+  if (excludeCurrent && state.currentQuestion) pool = pool.filter(q => q.questionID !== state.currentQuestion.questionID);
+  if (!pool.length) pool = QUESTIONS.filter(q => q.questionType !== 'truefalse' && q.category === state.selectedCategory && q.difficulty === diff && (!excludeCurrent || q.questionID !== state.currentQuestion?.questionID));
+  if (!pool.length) { toast('ما فيه سؤال متاح بهذا المستوى في هذه الفئة'); return; }
   state.currentQuestion = pool[Math.floor(Math.random()*pool.length)];
   state.usedQuestions.add(state.currentQuestion.questionID);
   state.deadline = Date.now()+60000;
@@ -50,7 +29,7 @@ pickQuestion = function(diff, excludeCurrent=false){
   render();
 };
 
-// 5) Points selection is always a separate screen.
+// RTL order: 200 appears on the right, then 400, then 600 on the left.
 difficulty = function(){
   const c = CATS[state.selectedCategory];
   gameLayout(`
@@ -58,17 +37,14 @@ difficulty = function(){
     <div class="selected-cat" style="font-size:32px">${c.emoji} ${c.name}</div>
     <h2 class="center-title">اختاروا النقاط</h2>
     <div class="difficulty-grid">
-      <button class="difficulty hard" data-diff="hard"><div class="points">600</div></button>
-      <button class="difficulty medium" data-diff="medium"><div class="points">400</div></button>
       <button class="difficulty easy" data-diff="easy"><div class="points">200</div></button>
+      <button class="difficulty medium" data-diff="medium"><div class="points">400</div></button>
+      <button class="difficulty hard" data-diff="hard"><div class="points">600</div></button>
     </div>
   `);
-  document.querySelectorAll('[data-diff]').forEach(b=>{
-    b.onclick=()=>pickQuestion(b.dataset.diff);
-  });
+  document.querySelectorAll('[data-diff]').forEach(b=>b.onclick=()=>pickQuestion(b.dataset.diff));
 };
 
-// 6) Reel stores exactly the DOM item that visually lands under the pointer.
 spin = function(){
   const cats = state.categories.map(k=>[k,CATS[k]]).filter(([,c])=>c);
   gameLayout(`
@@ -108,15 +84,25 @@ spin = function(){
       picked.textContent=`${c.emoji} ${c.name}`;
       btn.textContent='اختاروا النقاط';
       btn.disabled=false;
-      btn.onclick=()=>{
-        state.screen='difficulty';
-        render();
-      };
+      btn.onclick=()=>{ state.screen='difficulty'; render(); };
     },2200);
   };
 };
 
-// 7) Question renderer: logos and direct questions are answered by the team themselves.
+function openAnswerBlock(q, mediaHtml=''){
+  return `${mediaHtml}<div class="reveal-answer-wrap" style="text-align:center;margin-top:14px">
+    <button class="btn btn-primary" id="revealAnswer">إظهار الجواب</button>
+    <div id="revealedAnswer" style="display:none;margin-top:18px">
+      <div style="color:#817b89;font-size:14px;margin-bottom:6px">الجواب الصحيح</div>
+      <div style="font-size:30px;font-weight:800;margin-bottom:18px">${q.correctAnswer}</div>
+      <div class="direct-actions">
+        <button class="btn correct-btn" id="correct">✓ جاوبوا صح</button>
+        <button class="btn wrong-btn" id="wrong">✕ ما عرفوه</button>
+      </div>
+    </div>
+  </div>`;
+}
+
 question = function(){
   const q=state.currentQuestion;
   const c=CATS[q.category];
@@ -126,13 +112,15 @@ question = function(){
   let body='';
 
   if(q.questionType==='ordering'){
-    body=`<div class="ordering-instruction">رتّبوا من <strong>${q.orderLabel||'الأكثر إلى الأقل'}</strong></div><div class="ordering-list">${q.items.map((x,i)=>`<div><span>${i+1}</span>${x}</div>`).join('')}</div><div class="direct-actions"><button class="btn correct-btn" id="correct">✓ صحيح</button><button class="btn wrong-btn" id="wrong">✕ خطأ</button></div>`;
+    const media=`<div class="ordering-instruction">رتّبوا من <strong>${q.orderLabel||'الأكثر إلى الأقل'}</strong></div><div class="ordering-list">${q.items.map((x,i)=>`<div><span>${i+1}</span>${x}</div>`).join('')}</div>`;
+    body=openAnswerBlock(q,media);
   } else if(q.questionType==='logo'){
-    body=`<div class="logo-question" style="text-align:center;margin:12px 0 28px"><div style="min-height:180px;display:grid;place-items:center"><img src="${q.mediaURL}" alt="شعار للسؤال" style="max-width:220px;max-height:150px;object-fit:contain"></div></div><div class="direct-actions"><button class="btn correct-btn" id="correct">✓ جاوبوا صح</button><button class="btn wrong-btn" id="wrong">✕ ما عرفوه</button></div>`;
+    const media=`<div class="logo-question" style="text-align:center;margin:12px 0 28px"><div style="min-height:180px;display:grid;place-items:center"><img src="${q.mediaURL}" alt="شعار للسؤال" style="max-width:220px;max-height:150px;object-fit:contain"></div></div>`;
+    body=openAnswerBlock(q,media);
   } else if(isMCQ){
     body=`<div class="answers">${answers.map(a=>`<button class="answer-btn" data-answer="${a.replace(/"/g,'&quot;')}">${a}</button>`).join('')}</div>`;
   } else {
-    body=`<div class="direct-actions"><button class="btn correct-btn" id="correct">✓ جاوبوا صح</button><button class="btn wrong-btn" id="wrong">✕ ما عرفوه</button></div>`;
+    body=openAnswerBlock(q);
   }
 
   gameLayout(`<div class="question-shell"><div class="question-top"><div class="q-meta">${c.emoji} ${c.name} <b>${q.points} نقطة</b></div><div class="timer" id="timer"><strong id="timeText">60</strong><small>ثانية</small></div></div><div class="question-card"><div class="question-text">${q.questionText}</div>${body}<div class="lifelines"><button class="life-btn" data-life="hint" ${team.lifelines.hint?'':'disabled'}>💡 تلميح</button><button class="life-btn" data-life="fifty" ${team.lifelines.fifty&&isMCQ?'':'disabled'}>✂️ 50/50</button><button class="life-btn" data-life="time" ${team.lifelines.time?'':'disabled'}>⏱️ +15 ثانية</button><button class="life-btn" data-life="change" ${team.lifelines.change?'':'disabled'}>🔄 غير السؤال</button></div><div id="hintBox"></div></div></div>`);
@@ -140,13 +128,18 @@ question = function(){
   if(isMCQ){
     document.querySelectorAll('[data-answer]').forEach(b=>b.onclick=()=>finishQuestion(b.dataset.answer===q.correctAnswer?'correct':'wrong'));
   } else {
-    document.getElementById('correct').onclick=()=>finishQuestion('correct');
-    document.getElementById('wrong').onclick=()=>finishQuestion('wrong');
+    const reveal=document.getElementById('revealAnswer');
+    reveal.onclick=()=>{
+      reveal.style.display='none';
+      document.getElementById('revealedAnswer').style.display='block';
+      document.getElementById('correct').onclick=()=>finishQuestion('correct');
+      document.getElementById('wrong').onclick=()=>finishQuestion('wrong');
+    };
   }
+
   document.querySelectorAll('[data-life]').forEach(b=>b.onclick=()=>useLife(b.dataset.life));
   tick();
   state.timerId=setInterval(tick,200);
 };
 
-// Refresh the initial screen so the new category appears in setup too.
 render();
