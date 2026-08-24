@@ -28,6 +28,13 @@ function revealBlock(q){
   return `<div class="reveal-answer-wrap" style="text-align:center;margin-top:18px"><button class="btn btn-primary" id="revealAnswer">إظهار الجواب</button><div id="revealedAnswer" style="display:none;margin-top:18px"><div style="color:#817b89;font-size:14px;margin-bottom:6px">الجواب الصحيح</div><div style="font-size:30px;font-weight:800;margin-bottom:18px">${q.correctAnswer}</div><div class="direct-actions"><button class="btn correct-btn" id="correct">✓ جاوبوا صح</button><button class="btn wrong-btn" id="wrong">✕ ما عرفوه</button></div></div></div>`;
 }
 
+function logoBlock(q){
+  if(q.mediaURL){
+    return `<div class="logo-question"><div class="logo-media"><img src="${q.mediaURL}" alt="" onerror="this.parentElement.innerHTML='<div class=&quot;logo-fallback&quot;>${q.logoText||'؟'}</div>'"></div></div>`;
+  }
+  return `<div class="logo-question"><div class="logo-fallback">${q.logoText||'؟'}</div>${q.logoSub?`<div class="logo-sub">${q.logoSub}</div>`:''}</div>`;
+}
+
 question = function(){
   const q=state.currentQuestion,c=CATS[q.category],team=state.teams[state.currentTeam];
   const isMCQ=q.questionType==='mcq',isLogo=q.questionType==='logo',isComplete=q.questionType==='complete',isOrdering=q.questionType==='ordering';
@@ -36,7 +43,7 @@ question = function(){
   state.currentAwardPoints=state.currentAwardPoints??q.points;
   let body='';
   if(isOrdering){body=`<div class="ordering-instruction">رتّبوا من <strong>${q.orderLabel||'الأكثر إلى الأقل'}</strong></div><div class="ordering-list">${q.items.map((x,i)=>`<div><span>${i+1}</span>${x}</div>`).join('')}</div>`+revealBlock(q);}
-  else if(isLogo){body=`<div class="logo-question" style="text-align:center;margin:12px 0 28px"><div style="min-height:180px;display:grid;place-items:center"><img src="${q.mediaURL}" alt="شعار للسؤال" style="max-width:220px;max-height:150px;object-fit:contain"></div></div>`+revealBlock(q);}
+  else if(isLogo){body=logoBlock(q)+revealBlock(q);}
   else if(isComplete){body=`<div style="text-align:center;margin:8px 0 24px;color:#817b89;font-size:14px">كملوا الفراغ من نفسكم</div>${revealBlock(q)}`;}
   else if(isMCQ){body=`<div class="answers">${answers.map(a=>`<button class="answer-btn" data-answer="${a.replace(/"/g,'&quot;')}">${a}</button>`).join('')}</div>`;}
   else {body=`<div id="openAnswerArea">${revealBlock(q)}</div>`;}
