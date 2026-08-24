@@ -1,9 +1,9 @@
 // V3: song fill-in questions + optional answer choices worth a fixed 50 points.
 
 QUESTIONS.push(
-  {questionID:'song-fill-e-1',category:'songs',difficulty:'easy',points:200,questionType:'complete',questionText:'أكمل: تتنفسك ____',correctAnswer:'دنياي',wrongAnswers:[],hint:'الكلمة تعني عالمي أو حياتي.',countryRegionTags:['Saudi'],eraTag:'Modern'},
-  {questionID:'song-fill-m-1',category:'songs',difficulty:'medium',points:400,questionType:'complete',questionText:'أكمل اسم الأغنية: ____ خميس',correctAnswer:'ليلة',wrongAnswers:[],hint:'من أشهر أغاني محمد عبده.',countryRegionTags:['Saudi'],eraTag:'Classic'},
-  {questionID:'song-fill-h-1',category:'songs',difficulty:'hard',points:600,questionType:'complete',questionText:'أكمل: يا ابن ____',correctAnswer:'الأوادم',wrongAnswers:[],hint:'من أغاني محمد عبده.',countryRegionTags:['Saudi'],eraTag:'Classic'}
+  {questionID:'song-fill-e-1',category:'songs',difficulty:'easy',points:200,questionType:'complete',questionText:'من أغاني عبدالمجيد عبدالله: «تتنفسك ____» — أكمل الكلمة الناقصة.',correctAnswer:'دنياي',wrongAnswers:[],hint:'الكلمة تعني عالمي أو حياتي.',countryRegionTags:['Saudi'],eraTag:'Modern'},
+  {questionID:'song-fill-m-1',category:'songs',difficulty:'medium',points:400,questionType:'complete',questionText:'من أشهر أغاني محمد عبده: «____ خميس» — وش الكلمة الناقصة؟',correctAnswer:'ليلة',wrongAnswers:[],hint:'الكلمة مرتبطة بوقت من اليوم.',countryRegionTags:['Saudi'],eraTag:'Classic'},
+  {questionID:'song-fill-h-1',category:'songs',difficulty:'hard',points:600,questionType:'complete',questionText:'من أعمال محمد عبده: «يا ابن ____» — أكمل الكلمة الناقصة.',correctAnswer:'الأوادم',wrongAnswers:[],hint:'كلمة دارجة يقصد بها الناس.',countryRegionTags:['Saudi'],eraTag:'Classic'}
 );
 
 state.currentAwardPoints = null;
