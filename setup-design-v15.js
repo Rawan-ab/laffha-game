@@ -1,14 +1,12 @@
-// V21 setup: refined spacing, clear logo/title separation, roomier helper cards.
+// V26 setup: corner brand, compact intro, responsive setup layout.
 home=function(){state.screen='setup';setup();};
 setup=function(){
   if(!state.teams.length)resetTeams();
   const classByKey={tv:'cat-blue',movies:'cat-coral',songs:'cat-yellow',artists:'cat-purple',cartoons:'cat-violet',sports:'cat-green',general:'cat-lilac',logos:'cat-pink'};
   shell(`<div class="setup-page-v16">
     <main class="card setup-card setup-reference">
-      <div class="setup-hero-head">
-        <div class="setup-logo-wrap"><span class="spark spark-a">✦</span><div class="setup-logo">لفّها</div><span class="spark spark-b">✦</span></div>
-        <div class="setup-tagline">اختاروا التحدي، <b>فكروا بسرعة</b>، والعبوا للفوز!</div>
-      </div>
+      <div class="setup-corner-brand">لفّها</div>
+      <div class="setup-intro-line">اختاروا التحدي، <b>فكروا بسرعة</b>، والعبوا للفوز!</div>
 
       <div class="setup-controls-top">
         <div class="field setup-field-reference team-count-field"><h3 class="section-title">عدد الفرق</h3><div class="choice-row setup-choice-row">${[2,3,4,5,6].map(n=>`<button class="choice ${state.teamCount===n?'active':''}" data-teamcount="${n}">${n}</button>`).join('')}</div></div>
