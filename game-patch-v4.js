@@ -44,3 +44,24 @@ spin = function(){
     },2200);
   };
 };
+
+// If a team asks for answer choices on an open question, the question becomes worth exactly 50 points.
+document.addEventListener('click', (event) => {
+  const button = event.target.closest('#giveChoices');
+  if (!button) return;
+
+  setTimeout(() => {
+    if (!state.usedChoiceAssist) return;
+    state.currentAwardPoints = 50;
+
+    const pointsEl = document.getElementById('awardPoints');
+    if (pointsEl) pointsEl.textContent = '50';
+
+    const area = document.getElementById('openAnswerArea');
+    if (area) {
+      const notices = [...area.querySelectorAll('div')];
+      const notice = notices.find(el => el.textContent.includes('قيمة السؤال الآن'));
+      if (notice) notice.textContent = 'استخدمتوا الخيارات — قيمة السؤال الآن 50 نقطة';
+    }
+  }, 0);
+});
