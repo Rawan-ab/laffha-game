@@ -1,4 +1,5 @@
-// V5: simple reliable category draw. All categories stay visible; a highlight hops between cards and stops on the actual selected category.
+// V6: random category draw followed by an equally random points draw.
+// 200 -> easy, 400 -> medium, 600 -> hard. The team no longer chooses the value.
 spin = function(){
   const cats = state.categories.map(k=>[k,CATS[k]]).filter(([,c])=>c);
   gameLayout(`
@@ -41,8 +42,56 @@ spin = function(){
       state.selectedCategory=winner.dataset.key;
       const c=CATS[state.selectedCategory];
       picked.innerHTML=`<div class="picked-pill simple-picked-pill" style="--picked:${c.color}"><span>${c.emoji}</span><div><small>الفئة المختارة</small><strong>${c.name}</strong></div><b>✨</b></div>`;
-      btn.textContent='اختاروا النقاط';btn.disabled=false;btn.classList.add('points-ready');running=false;
+      btn.textContent='اسحبوا النقاط';btn.disabled=false;btn.classList.add('points-ready');running=false;
       btn.onclick=()=>{state.screen='difficulty';render();};
+    };
+    hop();
+  };
+};
+
+// Points are now a second random draw instead of a manual choice.
+difficulty = function(){
+  const c=CATS[state.selectedCategory];
+  const values=[
+    {points:200,diff:'easy',label:'سهل',cls:'easy'},
+    {points:400,diff:'medium',label:'متوسط',cls:'medium'},
+    {points:600,diff:'hard',label:'صعب',cls:'hard'}
+  ];
+  gameLayout(`
+    <div class="selected-cat">${c.emoji} ${c.name}</div>
+    <div class="spin-copy simple-spin-copy points-copy">
+      <div class="turn-label">النقاط العشوائية</div>
+      <h2>اسحبوا لتحديد النقاط</h2>
+      <p class="reel-help">200 أو 400 أو 600 — لكل قيمة فرصة متساوية</p>
+    </div>
+    <div class="difficulty-grid random-points-grid" id="pointsDrawGrid">
+      ${values.map(v=>`<div class="difficulty ${v.cls} point-draw-card" data-points="${v.points}" data-diff="${v.diff}"><div class="points">${v.points}</div><small>${v.label}</small></div>`).join('')}
+    </div>
+    <div id="pickedPoints" class="picked-category simple-picked"></div>
+    <button class="spin-action simple-spin-action" id="pointsSpinBtn">اسحب النقاط</button>
+  `);
+
+  const btn=document.getElementById('pointsSpinBtn');
+  const cards=[...document.querySelectorAll('.point-draw-card')];
+  const picked=document.getElementById('pickedPoints');
+  let running=false;
+  btn.onclick=()=>{
+    if(running)return;
+    running=true;btn.disabled=true;picked.innerHTML='';
+    cards.forEach(x=>x.classList.remove('draw-active','draw-winner'));
+    const finalIndex=Math.floor(Math.random()*values.length);
+    const steps=12+Math.floor(Math.random()*7);
+    let step=0;
+    const hop=()=>{
+      cards.forEach(x=>x.classList.remove('draw-active'));
+      const index=step<steps ? step%cards.length : finalIndex;
+      cards[index].classList.add('draw-active');
+      if(step<steps){step++;setTimeout(hop,90+step*14);return;}
+      const winner=cards[finalIndex],choice=values[finalIndex];
+      winner.classList.add('draw-winner');
+      picked.innerHTML=`<div class="picked-pill simple-picked-pill"><span>🎯</span><div><small>النقاط المختارة</small><strong>${choice.points} نقطة</strong></div><b>✨</b></div>`;
+      btn.textContent='ابدأ السؤال';btn.disabled=false;running=false;
+      btn.onclick=()=>pickQuestion(choice.diff);
     };
     hop();
   };
