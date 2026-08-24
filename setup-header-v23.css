@@ -1,75 +1,44 @@
-/* V25 — small side logo + compact opening line */
-.setup-hero-head{
-  position:relative!important;
-  display:block!important;
-  min-height:42px!important;
-  margin:0 0 8px!important;
-  padding:0 84px 0 84px!important;
+/* V26 — small corner brand + compact intro */
+.setup-reference{position:relative!important;padding-top:18px!important}
+.setup-corner-brand{
+  position:absolute;
+  top:12px;
+  right:20px;
+  font-size:24px;
+  line-height:1;
+  font-weight:800;
+  letter-spacing:-1px;
+  background:linear-gradient(110deg,#31236f 6%,#6d3e92 52%,#f06f59 98%);
+  -webkit-background-clip:text;
+  color:transparent;
+  z-index:2;
 }
-
-/* Keep Laffha as a small side brand, like the old header */
-.setup-logo-wrap{
-  position:absolute!important;
-  top:-4px!important;
-  right:4px!important;
-  left:auto!important;
-  margin:0!important;
-  padding:0!important;
-  width:auto!important;
-  line-height:1!important;
+.setup-intro-line{
+  text-align:center;
+  color:#242033;
+  font-size:15px;
+  line-height:1.5;
+  font-weight:700;
+  margin:0 0 10px;
+  padding-top:2px;
 }
-.setup-logo{
-  font-size:30px!important;
-  line-height:1!important;
-  letter-spacing:-1px!important;
-  white-space:nowrap!important;
-}
-.spark{display:none!important}
-
-/* Opening line becomes the real page header */
-.setup-tagline{
-  display:block!important;
-  width:100%!important;
-  max-width:none!important;
-  margin:-2px auto 0!important;
-  text-align:center!important;
-  font-size:17px!important;
-  line-height:1.35!important;
-  font-weight:750!important;
-  white-space:nowrap!important;
-  color:var(--ink)!important;
-}
-.setup-tagline b{font-weight:800!important;color:#db5953!important}
-
-/* Pull the settings upward */
-.setup-controls-top{margin-top:-2px!important}
+.setup-intro-line b{color:#db5953;font-weight:800}
+.setup-controls-top{margin-top:0!important}
+.setup-hero-head,.setup-logo-wrap,.setup-logo,.setup-tagline,.spark{display:none!important}
 
 @media (min-width:1600px){
-  .setup-hero-head{min-height:44px!important;padding-inline:96px!important}
-  .setup-logo{font-size:32px!important}
-  .setup-tagline{font-size:18px!important}
+  .setup-corner-brand{font-size:26px;top:13px;right:22px}
+  .setup-intro-line{font-size:16px;margin-bottom:12px}
 }
 
 @media (max-width:900px){
-  .setup-hero-head{
-    min-height:48px!important;
-    margin-bottom:9px!important;
-    padding:0 72px 0 8px!important;
-  }
-  .setup-logo-wrap{top:0!important;right:4px!important}
-  .setup-logo{font-size:27px!important}
-  .setup-tagline{
-    margin:0!important;
-    font-size:13px!important;
-    line-height:1.45!important;
-    white-space:normal!important;
-    text-align:right!important;
-    padding-top:2px!important;
-  }
+  .setup-reference{padding-top:44px!important}
+  .setup-corner-brand{top:13px;right:15px;font-size:22px}
+  .setup-intro-line{font-size:13px;max-width:360px;margin:0 auto 12px;line-height:1.55}
 }
 
 @media (max-width:520px){
-  .setup-hero-head{min-height:52px!important;padding-right:64px!important;padding-left:2px!important}
-  .setup-logo{font-size:25px!important}
-  .setup-tagline{font-size:11.5px!important;line-height:1.5!important}
+  .setup-reference{padding-top:40px!important}
+  .setup-corner-brand{top:12px;right:12px;font-size:20px}
+  .setup-intro-line{font-size:11.5px;max-width:290px;margin-bottom:10px}
 }
