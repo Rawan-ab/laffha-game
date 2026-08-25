@@ -1,4 +1,4 @@
-// Fair draw V35 — balanced 200/400/600 per team + shared category deck without repeats.
+// Fair draw V46 — equal point opportunity for every team + shared category deck without repeats.
 (function(){
   const LEVELS=[
     {points:200,diff:'easy',label:'سهل'},
@@ -15,12 +15,26 @@
     return a;
   }
 
-  // ---------- Fair point deck: separate hidden deck for each team ----------
-  function buildTeamDeck(rounds,teamIndex){
+  // ---------- Fair point deck: SAME difficulty counts and SAME maximum score for every team ----------
+  // The average opportunity is always exactly 400 points per round:
+  // 5 rounds  -> 2 easy + 1 medium + 2 hard = 2000
+  // 7 rounds  -> 2 easy + 3 medium + 2 hard = 2800
+  // 10 rounds -> 3 easy + 4 medium + 3 hard = 4000
+  // 15 rounds -> 5 easy + 5 medium + 5 hard = 6000
+  function fairCounts(rounds){
     const base=Math.floor(rounds/3), remainder=rounds%3;
     const counts=[base,base,base];
-    // Rotate any extra rounds so one difficulty is not favored for every team.
-    for(let r=0;r<remainder;r++) counts[(teamIndex+r)%3]++;
+    if(remainder===1){
+      counts[1]++; // one extra medium keeps the average at 400
+    }else if(remainder===2){
+      counts[0]++; // one easy + one hard also average to 400
+      counts[2]++;
+    }
+    return counts;
+  }
+
+  function buildTeamDeck(rounds){
+    const counts=fairCounts(rounds);
     const deck=[];
     counts.forEach((count,idx)=>{
       for(let i=0;i<count;i++) deck.push(LEVELS[idx]);
@@ -29,7 +43,7 @@
   }
 
   function preparePointDecks(){
-    state.fairPointDecks=state.teams.map((_,i)=>buildTeamDeck(state.rounds,i));
+    state.fairPointDecks=state.teams.map(()=>buildTeamDeck(state.rounds));
     state.fairPointPositions=state.teams.map(()=>0);
   }
 
@@ -39,7 +53,7 @@
     let pos=state.fairPointPositions[team]||0;
     const deck=state.fairPointDecks[team]||[];
     if(pos>=deck.length){
-      state.fairPointDecks[team]=buildTeamDeck(state.rounds,team);
+      state.fairPointDecks[team]=buildTeamDeck(state.rounds);
       state.fairPointPositions[team]=0;
       pos=0;
     }
@@ -56,8 +70,6 @@
   function buildCategoryDeck(){
     const keys=activeCategoryKeys();
     let deck=shuffle(keys);
-
-    // Prevent an immediate duplicate across cycle boundaries when possible.
     if(deck.length>1 && state.lastDrawnCategory && deck[0]===state.lastDrawnCategory){
       const swapIndex=deck.findIndex((k,i)=>i>0 && k!==state.lastDrawnCategory);
       if(swapIndex>0) [deck[0],deck[swapIndex]]=[deck[swapIndex],deck[0]];
@@ -74,22 +86,18 @@
   function nextFairCategory(){
     const active=activeCategoryKeys();
     if(!active.length) return null;
-
-    // Rebuild if the selected categories changed or the current cycle finished.
     const currentDeck=state.categoryDeck||[];
     const sameSet=currentDeck.length===active.length && active.every(k=>currentDeck.includes(k));
     if(!sameSet || state.categoryDeckPosition==null || state.categoryDeckPosition>=currentDeck.length){
       state.categoryDeck=buildCategoryDeck();
       state.categoryDeckPosition=0;
     }
-
     const key=state.categoryDeck[state.categoryDeckPosition]||active[Math.floor(Math.random()*active.length)];
     state.categoryDeckPosition+=1;
     state.lastDrawnCategory=key;
     return key;
   }
 
-  // Rebuild all hidden decks whenever a new match starts from setup.
   const oldSetup=setup;
   setup=function(){
     oldSetup();
@@ -104,10 +112,9 @@
     }
   };
 
-  // Category comes from the shared no-repeat deck; points come from the current team's fair deck.
   spin=function(){
     const cats=activeCategoryKeys().map(k=>[k,CATS[k]]);
-    gameLayout(`<div class="spin-copy"><h2>اختاروا التحدي</h2><p class="reel-help">اضغطوا مرة واحدة لتحديد الفئة والنقاط</p></div><div class="category-draw-grid">${cats.map(([k,c])=>`<div class="draw-cat-card" data-key="${k}" style="background:${c.color}"><span>${c.emoji}</span><strong>${c.name}</strong></div>`).join('')}</div><div id="drawResult" class="picked-category"></div><button class="spin-action" id="spinBtn">ابدأ الاختيار</button><div class="rule-strip"><span>⚖️ توزيع النقاط عادل بين الفرق</span><span>❌ الخطأ ينهي السؤال</span><span>⏱️ 60 ثانية</span></div>`);
+    gameLayout(`<div class="spin-copy"><h2>اختاروا التحدي</h2><p class="reel-help">اضغطوا مرة واحدة لتحديد الفئة والنقاط</p></div><div class="category-draw-grid">${cats.map(([k,c])=>`<div class="draw-cat-card" data-key="${k}" style="background:${c.color}"><span>${c.emoji}</span><strong>${c.name}</strong></div>`).join('')}</div><div id="drawResult" class="picked-category"></div><button class="spin-action" id="spinBtn">ابدأ الاختيار</button><div class="rule-strip"><span>⚖️ نفس فرص النقاط لكل فريق</span><span>❌ الخطأ ينهي السؤال</span><span>⏱️ 60 ثانية</span></div>`);
 
     const btn=document.getElementById('spinBtn');
     const result=document.getElementById('drawResult');
@@ -116,9 +123,7 @@
 
     btn.onclick=()=>{
       if(running||!cards.length)return;
-      running=true;
-      btn.disabled=true;
-      result.innerHTML='';
+      running=true;btn.disabled=true;result.innerHTML='';
       cards.forEach(c=>c.classList.remove('draw-active','draw-winner'));
 
       const categoryChoice=nextFairCategory();
@@ -131,31 +136,23 @@
         cards.forEach(c=>c.classList.remove('draw-active'));
         const index=step<steps ? step%cards.length : finalIndex;
         cards[index].classList.add('draw-active');
-
-        if(step<steps){
-          const delay=55+step*8;
-          step++;
-          setTimeout(hop,delay);
-          return;
-        }
+        if(step<steps){const delay=55+step*8;step++;setTimeout(hop,delay);return;}
 
         const winner=cards[finalIndex];
         cards.forEach(c=>c.classList.remove('draw-active'));
         winner.classList.add('draw-winner');
-
         state.selectedCategory=winner.dataset.key;
         state.drawnDifficulty=pointChoice.diff;
         state.drawnPoints=pointChoice.points;
         const c=CATS[state.selectedCategory];
-
         result.innerHTML=`<div class="picked-pill" style="--picked:${c.color}"><span>${c.emoji}</span><div><small>التحدي المختار</small><strong>${c.name} · ${pointChoice.points} نقطة · ${pointChoice.label}</strong></div></div>`;
-        btn.textContent='ابدأ السؤال';
-        btn.classList.add('points-ready');
-        btn.disabled=false;
-        running=false;
+        btn.textContent='ابدأ السؤال';btn.classList.add('points-ready');btn.disabled=false;running=false;
         btn.onclick=()=>pickQuestion(pointChoice.diff);
       };
       hop();
     };
   };
+
+  window.LAFFHA_FAIR_COUNTS_V46=fairCounts;
+  console.info('Laffha V46 fair scoring ready', {rounds:state.rounds, counts:fairCounts(state.rounds)});
 })();
