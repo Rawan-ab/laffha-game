@@ -55,7 +55,7 @@ function pointFairness(){
 }
 
 function categorySimulation(teams=2,rounds=7,N=20000){
-  const cats=['tv','movies','songs','artists','cartoons','sports','general'];
+  const cats=['tv','movies','songs','artists','cartoons','sports','general','logos'];
   const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a};
   const uniq=Array.from({length:teams},()=>[]);
   for(let n=0;n<N;n++){
