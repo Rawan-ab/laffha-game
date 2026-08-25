@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#fffaf4" />
+<title>لفّها | تجربة توب 10</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#211d32;--muted:#8b8495;--paper:#fffdfb;--bg:#fff8f2;--line:#eadfd7;
+  --purple:#5c3aa0;--purple2:#7a4ed1;--gold:#e3b63e;--coral:#d76f62;
+  --blue:#6d76d8;--pink:#dd7cab;--green:#2f8d61;--red:#c85b50;--soft:#f7f2ef;
+}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:'Alexandria',sans-serif;background:radial-gradient(circle at 85% 5%,#fff0e7 0,transparent 30%),linear-gradient(180deg,#fffdfb,#fff8f2);color:var(--ink)}
+body{padding:18px}.shell{max-width:1240px;margin:0 auto}.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}.brand{font-size:34px;font-weight:800;background:linear-gradient(120deg,#392575,#8c4cab,#d9705e);-webkit-background-clip:text;background-clip:text;color:transparent}.demo{font-size:13px;color:#8d7b6e;border:1px solid var(--line);background:#fff;padding:8px 14px;border-radius:999px}
+.event{background:#fff;border:1px solid var(--line);border-radius:30px;box-shadow:0 22px 55px rgba(65,45,30,.08);padding:22px}.event-head{text-align:center;margin-bottom:18px}.crown{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#4a2c92,#7048bf);color:#fff;padding:9px 22px;border-radius:0 0 18px 18px;font-weight:800;box-shadow:0 8px 20px rgba(81,49,145,.2)}.eyebrow{font-size:13px;color:var(--muted);font-weight:700;margin-top:10px}.title{font-size:clamp(24px,3vw,42px);line-height:1.35;margin:8px auto 4px;max-width:900px}.sub{color:var(--muted);font-size:14px}.sub strong{color:#b47618}
+.teams{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}.team{border:1px solid var(--line);border-radius:20px;background:#fff;padding:14px 16px;position:relative;overflow:hidden}.team.active{border-color:#cfc1f4;box-shadow:0 0 0 3px #f1edff inset}.team.active:before{content:'دوركم الآن';position:absolute;left:14px;top:12px;font-size:11px;color:#6643ad;background:#f3efff;border-radius:999px;padding:5px 8px}.team-name{display:flex;align-items:center;gap:9px;font-weight:800}.dot{width:11px;height:11px;border-radius:50%}.blue{background:var(--blue)}.pink{background:var(--pink)}.team-stats{display:flex;align-items:flex-end;justify-content:space-between;margin-top:11px}.score{font-size:30px;font-weight:800}.score small{display:block;font-size:11px;color:var(--muted);font-weight:500}.hearts{direction:ltr;font-size:22px;letter-spacing:2px;white-space:nowrap}.heart.off{filter:grayscale(1);opacity:.2}
+.board{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin-top:18px}.slot{height:64px;border:1px solid var(--line);border-radius:16px;background:#fff;display:grid;grid-template-columns:44px 1fr 78px;align-items:center;padding:0 12px;transition:.25s}.slot.revealed{background:#f2fbf6;border-color:#c8e7d5;transform:translateY(-1px)}.rank{width:34px;height:34px;border-radius:50%;background:#f5f0ec;display:flex;align-items:center;justify-content:center;font-weight:800}.answer{text-align:center;font-weight:800;font-size:17px}.slot:not(.revealed) .answer{color:#bcb4be;letter-spacing:3px}.pts{font-size:13px;color:#b87918;text-align:left;font-weight:700}.slot.revealed .pts{color:var(--green)}
+.input-wrap{margin:20px auto 6px;max-width:760px}.turn{text-align:center;font-size:14px;font-weight:700;margin-bottom:9px}.turn span{display:inline-block;width:9px;height:9px;border-radius:50%;margin-left:7px}.entry{display:grid;grid-template-columns:1fr 140px;gap:10px}.entry input{width:100%;height:58px;border:1px solid #d9cfca;border-radius:16px;padding:0 18px;font:inherit;font-size:16px;outline:none;background:#fff}.entry input:focus{border-color:#b9a5ea;box-shadow:0 0 0 4px #f3efff}.send{border:0;border-radius:16px;background:linear-gradient(135deg,var(--purple2),var(--purple));color:#fff;font:inherit;font-weight:800;font-size:17px;cursor:pointer}.send:disabled{opacity:.35;cursor:not-allowed}
+.feedback{min-height:58px;margin:14px auto 0;max-width:760px;border-radius:16px;display:flex;align-items:center;justify-content:center;padding:12px 16px;text-align:center;font-weight:700}.feedback.neutral{background:#faf7f5;color:#8d858d}.feedback.good{background:#edf8f1;color:#24774e;border:1px solid #c9e6d4}.feedback.bad{background:#fff0ed;color:#a94a40;border:1px solid #f0cbc5}.feedback.repeat{background:#fff8e6;color:#9a6a10;border:1px solid #ecdba5}
+.rules{margin-top:18px;border-top:1px solid var(--line);padding-top:15px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}.pill{border:1px solid var(--line);border-radius:999px;background:#fff;padding:8px 13px;font-size:12px;color:#6f6771}.controls{display:flex;gap:10px;justify-content:center;margin-top:12px}.ghost{border:1px solid var(--line);background:#fff;border-radius:13px;padding:10px 14px;font:inherit;font-size:12px;cursor:pointer}.endbox{display:none;margin:16px auto 0;max-width:760px;padding:18px;background:#f4efff;border:1px solid #d9cdf6;border-radius:20px;text-align:center}.endbox.show{display:block}.endbox h3{margin:0 0 8px;font-size:24px}.winner{font-weight:800;color:#5c3aa0}
+@media(max-width:700px){body{padding:8px}.event{padding:14px 10px;border-radius:24px}.brand{font-size:28px}.topbar{padding:0 5px}.teams{gap:8px}.team{padding:12px 10px}.score{font-size:25px}.hearts{font-size:17px;letter-spacing:0}.board{grid-template-columns:1fr;gap:8px}.slot{height:56px;grid-template-columns:38px 1fr 62px;padding:0 8px}.answer{font-size:15px}.entry{grid-template-columns:1fr 92px}.entry input{height:54px;padding:0 12px}.send{font-size:14px}.title{font-size:25px}.sub{font-size:12px}.team.active:before{display:none}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="topbar"><div class="brand">لفّها</div><div class="demo">Prototype مستقل · غير مضاف للعبة</div></div>
+  <main class="event">
+    <div class="event-head">
+      <div class="crown">👑 توب 10</div>
+      <div class="eyebrow">حدث خاص · مواجهة مباشرة</div>
+      <h1 class="title">أكبر 10 دول في العالم من حيث المساحة البرية</h1>
+      <div class="sub">كلما كانت الإجابة <strong>أقل توقعًا</strong> وموجودة أسفل القائمة، كانت نقاطها أعلى.</div>
+    </div>
+
+    <section class="teams">
+      <div class="team active" id="team0">
+        <div class="team-name"><span class="dot blue"></span><span>الفريق 1</span></div>
+        <div class="team-stats"><div class="score"><span id="score0">0</span><small>نقطة</small></div><div class="hearts" id="hearts0"></div></div>
+      </div>
+      <div class="team" id="team1">
+        <div class="team-name"><span class="dot pink"></span><span>الفريق 2</span></div>
+        <div class="team-stats"><div class="score"><span id="score1">0</span><small>نقطة</small></div><div class="hearts" id="hearts1"></div></div>
+      </div>
+    </section>
+
+    <section class="board" id="board"></section>
+
+    <section class="input-wrap">
+      <div class="turn" id="turnText"><span class="blue"></span>دور الفريق 1</div>
+      <div class="entry">
+        <input id="guess" autocomplete="off" placeholder="اكتبوا إجابتكم هنا…" />
+        <button class="send" id="send">إرسال</button>
+      </div>
+      <div class="feedback neutral" id="feedback">جرّبي كتابة اسم دولة ثم اضغطي إرسال.</div>
+    </section>
+
+    <div class="endbox" id="endbox"><h3>انتهى تحدي توب 10 👑</h3><div id="result"></div></div>
+
+    <div class="rules">
+      <span class="pill">❤️ لكل فريق 5 أخطاء</span>
+      <span class="pill">✅ الصحيح يكشف ترتيبه ويضيف نقاطه</span>
+      <span class="pill">❌ الخطأ ينقص قلبًا</span>
+      <span class="pill">↔️ الدور ينتقل بعد كل إجابة</span>
+      <span class="pill">🔁 الإجابة المكررة لا تخصم قلبًا</span>
+    </div>
+    <div class="controls"><button class="ghost" id="restart">إعادة التجربة</button><button class="ghost" id="reveal">كشف القائمة للتجربة</button></div>
+  </main>
+</div>
+<script>
+const DATA=[
+ {rank:1,name:'روسيا',aliases:['روسيا','روسيا الاتحادية']},
+ {rank:2,name:'الصين',aliases:['الصين','جمهورية الصين الشعبية']},
+ {rank:3,name:'الولايات المتحدة',aliases:['الولايات المتحدة','الولايات المتحدة الامريكية','امريكا','أمريكا','usa']},
+ {rank:4,name:'كندا',aliases:['كندا']},
+ {rank:5,name:'البرازيل',aliases:['البرازيل']},
+ {rank:6,name:'أستراليا',aliases:['استراليا','أستراليا']},
+ {rank:7,name:'الهند',aliases:['الهند']},
+ {rank:8,name:'الأرجنتين',aliases:['الارجنتين','الأرجنتين','ارجنتين']},
+ {rank:9,name:'كازاخستان',aliases:['كازاخستان','كازخستان']},
+ {rank:10,name:'الجزائر',aliases:['الجزائر']}
+];
+let teams,turn,revealed,ended;
+const $=id=>document.getElementById(id);
+function normalize(s){return String(s||'').trim().toLowerCase().replace(/[ًٌٍَُِّْـ]/g,'').replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/[.,،!؟?]/g,'').replace(/\s+/g,' ')}
+function reset(){teams=[{score:0,lives:5},{score:0,lives:5}];turn=0;revealed=new Set();ended=false;$('guess').disabled=false;$('send').disabled=false;$('endbox').classList.remove('show');$('feedback').className='feedback neutral';$('feedback').textContent='جرّبي كتابة اسم دولة ثم اضغطي إرسال.';render();$('guess').value='';$('guess').focus()}
+function hearts(n){return Array.from({length:5},(_,i)=>`<span class="heart ${i>=n?'off':''}">♥</span>`).join('')}
+function render(){
+ $('score0').textContent=teams[0].score;$('score1').textContent=teams[1].score;$('hearts0').innerHTML=hearts(teams[0].lives);$('hearts1').innerHTML=hearts(teams[1].lives);
+ [0,1].forEach(i=>$('team'+i).classList.toggle('active',i===turn&&!ended&&teams[i].lives>0));
+ const color=turn===0?'blue':'pink';$('turnText').innerHTML=`<span class="${color}"></span>${teams[turn].lives>0?'دور الفريق '+(turn+1):'انتهت محاولات الفريق '+(turn+1)}`;
+ $('board').innerHTML=DATA.map(x=>`<div class="slot ${revealed.has(x.rank)?'revealed':''}"><div class="rank">${x.rank}</div><div class="answer">${revealed.has(x.rank)?x.name:'••••••••'}</div><div class="pts">+${x.rank} ${revealed.has(x.rank)?'نقاط':'نقطة'}</div></div>`).join('');
+}
+function findAnswer(v){const n=normalize(v);return DATA.find(x=>x.aliases.some(a=>normalize(a)===n))}
+function nextTurn(){
+ const other=turn===0?1:0;
+ if(teams[other].lives>0) turn=other; else if(teams[turn].lives<=0) finish();
+}
+function finishIfNeeded(){if(revealed.size===10||(teams[0].lives<=0&&teams[1].lives<=0)){finish();return true}return false}
+function finish(){ended=true;$('guess').disabled=true;$('send').disabled=true;const a=teams[0].score,b=teams[1].score;let text=a===b?'تعادل الفريقان!':`الفائز: <span class="winner">الفريق ${a>b?1:2}</span>`;$('result').innerHTML=`${text}<br>الفريق 1: ${a} نقطة · الفريق 2: ${b} نقطة`;$('endbox').classList.add('show');render()}
+function submit(){if(ended)return;const raw=$('guess').value.trim();if(!raw)return;$('guess').value='';const item=findAnswer(raw);
+ if(!item){teams[turn].lives--; $('feedback').className='feedback bad';$('feedback').textContent=`✕ «${raw}» ليست ضمن القائمة — خسر الفريق قلبًا.`;}
+ else if(revealed.has(item.rank)){ $('feedback').className='feedback repeat';$('feedback').textContent=`↺ ${item.name} إجابة صحيحة لكنها مذكورة مسبقًا — بدون خصم قلب.`;}
+ else {revealed.add(item.rank);teams[turn].score+=item.rank;$('feedback').className='feedback good';$('feedback').textContent=`✓ ${item.name} في المركز ${item.rank} — +${item.rank} نقاط للفريق ${turn+1}.`;}
+ if(finishIfNeeded())return;nextTurn();render();$('guess').focus();}
+$('send').addEventListener('click',submit);$('guess').addEventListener('keydown',e=>{if(e.key==='Enter')submit()});$('restart').addEventListener('click',reset);$('reveal').addEventListener('click',()=>{DATA.forEach(x=>revealed.add(x.rank));render();$('feedback').className='feedback neutral';$('feedback').textContent='تم كشف القائمة للتصميم فقط. اضغطي «إعادة التجربة» للبدء من جديد.'});reset();
+</script>
+</body></html>
