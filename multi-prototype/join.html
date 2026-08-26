@@ -1,1 +1,308 @@
-<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>لفّها | جوال الفريق</title><link rel="stylesheet" href="styles.css"></head><body><div class="top" style="max-width:430px;margin:0 auto 10px"><div class="brand">لفّها</div><div class="tag">جوال الفريق</div></div><main class="phone-shell"><div class="phone-head"><div class="team-title" id="headTeam">الفريق البنفسجي</div><div class="score"><span id="score">120</span><small>النقاط</small></div></div><div class="phone-body"><section class="screen active" id="join"><h2>انضم للغرفة 👥</h2><p class="label">أدخل رمز الغرفة ثم اختر فريقك.</p><div class="field"><div class="label">رمز الغرفة</div><input class="input" id="roomInput" maxlength="4" value="7K2M"></div><div class="field"><div class="label">اختر فريقك</div><div class="team-choice selected" data-team="الفريق البنفسجي"><span>🟣 الفريق البنفسجي</span><strong>←</strong></div><div class="team-choice" data-team="الفريق الأزرق"><span>🔵 الفريق الأزرق</span><strong>←</strong></div></div><button class="btn primary full" id="joinBtn">دخول</button><div class="demo-note">هذه نسخة واجهة فقط الآن. ما فيه اتصال فعلي باللابتوب إلى أن نركب نظام الـRoom.</div></section><section class="screen" id="waiting"><div class="wait-box"><div class="hourglass">⌛</div><h2>انتظروا دوركم</h2><p>الآن يلعب <strong style="color:var(--blue)">الفريق الأزرق</strong><br>تابعوا الشاشة الرئيسية لمشاهدة السؤال.</p></div></section><section class="screen" id="question"><div class="question-meta"><span>مسلسلات · 600 نقطة</span><span>41 ثانية</span></div><div class="question">من ابتكرت وكتبت بطولة مسلسل «Fleabag»؟</div><div class="answers"><button class="answer">فيبي والر بريدج</button><button class="answer">ميكايلا كويل</button><button class="answer">شارون هورغان</button><button class="answer">سالي وينرايت</button></div><button class="btn primary full confirm" id="confirm" disabled>تأكيد الإجابة</button><div class="assist"><button>💡<small>تلميح</small></button><button>✂️<small>50/50</small></button><button>⏱️<small>+15</small></button><button>🔄<small>تغيير</small></button></div></section><section class="screen" id="sent"><div class="sent"><div class="check">✅</div><h2>تم إرسال إجابتكم</h2><p>انتظروا النتيجة على الشاشة الرئيسية.</p></div></section><section class="screen" id="top10"><div class="top10-title">👑 توب 10</div><div class="label" style="text-align:center">دوركم الآن</div><div class="hearts">♥ ♥ ♥</div><div class="question" style="text-align:center;font-size:19px">أعلى 10 دول في العالم من حيث عدد السكان</div><div class="top10-input"><input class="input" placeholder="اكتبوا إجابتكم…"><button class="btn primary">إرسال</button></div><div class="notice">النظام لاحقًا يشيّك الإجابة تلقائيًا ويكشف ترتيبها على شاشة العرض.</div></section></div></main><div class="devbar"><button data-go="join">الدخول</button><button data-go="waiting">انتظار</button><button data-go="question">سؤال</button><button data-go="sent">تم الإرسال</button><button data-go="top10">توب 10</button></div><script>let team='الفريق البنفسجي';document.querySelectorAll('.team-choice').forEach(x=>x.onclick=()=>{document.querySelectorAll('.team-choice').forEach(y=>y.classList.remove('selected'));x.classList.add('selected');team=x.dataset.team});function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===id))}document.getElementById('joinBtn').onclick=()=>{document.getElementById('headTeam').textContent=team;show('waiting')};let selected=null;document.querySelectorAll('.answer').forEach(b=>b.onclick=()=>{document.querySelectorAll('.answer').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');selected=b.textContent;document.getElementById('confirm').disabled=false});document.getElementById('confirm').onclick=()=>selected&&show('sent');document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>show(b.dataset.go));</script></body></html>
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>لفّها | جوال الفريق</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="top" style="max-width:430px;margin:0 auto 10px">
+    <div class="brand">لفّها</div>
+    <div class="tag">جوال الفريق · Realtime</div>
+  </div>
+
+  <main class="phone-shell">
+    <div class="phone-head">
+      <div class="team-title" id="headTeam">غير متصل</div>
+      <div class="score"><span id="score">0</span><small>النقاط</small></div>
+    </div>
+
+    <div class="phone-body">
+      <section class="screen active" id="join">
+        <h2>انضم للغرفة 👥</h2>
+        <p class="label">أدخل رمز الغرفة الظاهر على شاشة اللابتوب ثم اختر فريقك.</p>
+
+        <div class="field">
+          <div class="label">رمز الغرفة</div>
+          <input class="input room-input" id="roomInput" maxlength="4" autocomplete="off" placeholder="7K2M">
+        </div>
+
+        <div class="field">
+          <div class="label">اختر فريقك</div>
+          <div class="team-choice selected" data-team-no="1" data-team="الفريق البنفسجي">
+            <span>🟣 الفريق البنفسجي</span><strong>←</strong>
+          </div>
+          <div class="team-choice" data-team-no="2" data-team="الفريق الأزرق">
+            <span>🔵 الفريق الأزرق</span><strong>←</strong>
+          </div>
+        </div>
+
+        <button class="btn primary full" id="joinBtn" disabled>جاري الاتصال…</button>
+        <div class="connection-note" id="joinMessage">جاري تجهيز الاتصال…</div>
+      </section>
+
+      <section class="screen" id="waiting">
+        <div class="wait-box connected-wait">
+          <div class="connected-icon">✓</div>
+          <h2>تم الاتصال بالغرفة</h2>
+          <p><strong id="waitingTeam"></strong><br>رمز الغرفة <b id="waitingCode"></b></p>
+          <div class="waiting-live"><span class="pulse-dot"></span> الاتصال مباشر</div>
+          <div class="notice">الحين راقبوا شاشة اللابتوب — لازم يظهر فريقكم «متصل ✓» مباشرة بدون تحديث الصفحة.</div>
+        </div>
+        <button class="btn secondary full" id="leaveRoom">الخروج وتغيير الفريق</button>
+      </section>
+
+      <section class="screen" id="gameStarted">
+        <div class="wait-box">
+          <div class="hourglass">🎮</div>
+          <h2>اللعبة بدأت</h2>
+          <p>الاتصال مع حالة اللعبة شغال. في المرحلة التالية بنعرض هنا أزرار التحكم والإجابات فقط.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    const { client, ensureSession, readableError } = window.LaffhaRealtime;
+    const TEAM_INFO = {
+      1: { name: 'الفريق البنفسجي', color: '#7848be' },
+      2: { name: 'الفريق الأزرق', color: '#5d79d8' },
+    };
+
+    const roomInput = document.getElementById('roomInput');
+    const joinBtn = document.getElementById('joinBtn');
+    const joinMessage = document.getElementById('joinMessage');
+    const headTeam = document.getElementById('headTeam');
+    const waitingTeam = document.getElementById('waitingTeam');
+    const waitingCode = document.getElementById('waitingCode');
+    const leaveRoom = document.getElementById('leaveRoom');
+
+    let user = null;
+    let selectedTeamNo = 1;
+    let membership = null;
+    let room = null;
+    let gameChannel = null;
+    let heartbeat = null;
+
+    function show(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.toggle('active', s.id === id));
+    }
+
+    function setMessage(text, type = '') {
+      joinMessage.textContent = text;
+      joinMessage.className = `connection-note ${type}`.trim();
+    }
+
+    function normalizeCode(value) {
+      return String(value || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4);
+    }
+
+    function setTeam(no) {
+      selectedTeamNo = Number(no);
+      document.querySelectorAll('.team-choice').forEach(x => {
+        x.classList.toggle('selected', Number(x.dataset.teamNo) === selectedTeamNo);
+      });
+    }
+
+    document.querySelectorAll('.team-choice').forEach(x => {
+      x.addEventListener('click', () => setTeam(x.dataset.teamNo));
+    });
+
+    roomInput.addEventListener('input', () => {
+      roomInput.value = normalizeCode(roomInput.value);
+    });
+
+    async function findRoom(code) {
+      const { data, error } = await client
+        .from('rooms')
+        .select('id,code,status,max_teams,expires_at')
+        .eq('code', code)
+        .gt('expires_at', new Date().toISOString())
+        .maybeSingle();
+      if (error) throw error;
+      if (!data) throw new Error('رمز الغرفة غير صحيح أو انتهت الغرفة.');
+      if (data.status !== 'waiting') throw new Error('هذه الغرفة بدأت أو انتهت بالفعل.');
+      return data;
+    }
+
+    async function ownMembership(roomId) {
+      const { data, error } = await client
+        .from('room_teams')
+        .select('*')
+        .eq('room_id', roomId)
+        .eq('user_id', user.id)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    }
+
+    async function teamSlot(roomId, teamNo) {
+      const { data, error } = await client
+        .from('room_teams')
+        .select('id,user_id,team_no')
+        .eq('room_id', roomId)
+        .eq('team_no', teamNo)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    }
+
+    async function touchConnection() {
+      if (!membership) return;
+      await client
+        .from('room_teams')
+        .update({ connected: true, last_seen: new Date().toISOString() })
+        .eq('id', membership.id)
+        .eq('user_id', user.id);
+    }
+
+    function startHeartbeat() {
+      clearInterval(heartbeat);
+      heartbeat = setInterval(touchConnection, 20000);
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') touchConnection();
+      });
+    }
+
+    function subscribeGame() {
+      if (!room) return;
+      if (gameChannel) client.removeChannel(gameChannel);
+      gameChannel = client
+        .channel(`laffha-phone-game-${room.id}-${user.id}`)
+        .on('postgres_changes', {
+          event: '*', schema: 'public', table: 'game_state', filter: `room_id=eq.${room.id}`
+        }, payload => {
+          const phase = payload.new?.phase;
+          if (phase && phase !== 'lobby') show('gameStarted');
+        })
+        .subscribe();
+    }
+
+    function enterWaiting() {
+      const info = TEAM_INFO[Number(membership.team_no)];
+      headTeam.textContent = info?.name || membership.name;
+      waitingTeam.textContent = info?.name || membership.name;
+      waitingCode.textContent = room.code;
+      setTeam(membership.team_no);
+      localStorage.setItem('laffhaPrototypeTeam', JSON.stringify({ roomId: room.id, code: room.code, teamNo: membership.team_no }));
+      show('waiting');
+      startHeartbeat();
+      subscribeGame();
+    }
+
+    async function joinRoom() {
+      const code = normalizeCode(roomInput.value);
+      roomInput.value = code;
+      if (code.length !== 4) {
+        setMessage('اكتبوا رمز الغرفة المكوّن من 4 خانات.', 'error');
+        return;
+      }
+
+      joinBtn.disabled = true;
+      setMessage('جاري الدخول للغرفة…');
+
+      try {
+        room = await findRoom(code);
+
+        const existingSelf = await ownMembership(room.id);
+        if (existingSelf) {
+          membership = existingSelf;
+          await touchConnection();
+          enterWaiting();
+          return;
+        }
+
+        const occupied = await teamSlot(room.id, selectedTeamNo);
+        if (occupied && occupied.user_id !== user.id) {
+          throw new Error('هذا الفريق مستخدم بالفعل. اختاروا الفريق الثاني.');
+        }
+
+        const info = TEAM_INFO[selectedTeamNo];
+        const { data, error } = await client
+          .from('room_teams')
+          .insert({
+            room_id: room.id,
+            team_no: selectedTeamNo,
+            name: info.name,
+            color: info.color,
+            user_id: user.id,
+            connected: true,
+            last_seen: new Date().toISOString(),
+          })
+          .select('*')
+          .single();
+
+        if (error) {
+          if (error.code === '23505') throw new Error('هذا الفريق انضم له جهاز آخر للتو. اختاروا الفريق الثاني.');
+          throw error;
+        }
+
+        membership = data;
+        enterWaiting();
+      } catch (error) {
+        setMessage(readableError(error), 'error');
+      } finally {
+        joinBtn.disabled = false;
+        joinBtn.textContent = 'دخول الغرفة';
+      }
+    }
+
+    async function restoreIfPossible() {
+      let saved = null;
+      try { saved = JSON.parse(localStorage.getItem('laffhaPrototypeTeam') || 'null'); } catch (_) {}
+      const queryCode = normalizeCode(new URLSearchParams(location.search).get('room'));
+      const code = queryCode || normalizeCode(saved?.code);
+      if (!code || code.length !== 4) return false;
+
+      roomInput.value = code;
+      try {
+        room = await findRoom(code);
+        const mine = await ownMembership(room.id);
+        if (!mine) return false;
+        membership = mine;
+        await touchConnection();
+        enterWaiting();
+        return true;
+      } catch (_) {
+        localStorage.removeItem('laffhaPrototypeTeam');
+        return false;
+      }
+    }
+
+    joinBtn.addEventListener('click', joinRoom);
+    roomInput.addEventListener('keydown', e => { if (e.key === 'Enter') joinRoom(); });
+
+    leaveRoom.addEventListener('click', async () => {
+      if (membership) {
+        await client.from('room_teams').delete().eq('id', membership.id).eq('user_id', user.id);
+      }
+      if (gameChannel) client.removeChannel(gameChannel);
+      clearInterval(heartbeat);
+      localStorage.removeItem('laffhaPrototypeTeam');
+      membership = null;
+      room = null;
+      headTeam.textContent = 'غير متصل';
+      show('join');
+      setMessage('اختاروا الفريق ثم ادخلوا الغرفة.', 'success');
+    });
+
+    (async function init() {
+      const queryCode = normalizeCode(new URLSearchParams(location.search).get('room'));
+      if (queryCode) roomInput.value = queryCode;
+      try {
+        user = await ensureSession();
+        joinBtn.disabled = false;
+        joinBtn.textContent = 'دخول الغرفة';
+        const restored = await restoreIfPossible();
+        if (!restored) setMessage('الاتصال جاهز. أدخلوا الرمز واختاروا الفريق.', 'success');
+      } catch (error) {
+        joinBtn.disabled = true;
+        setMessage(readableError(error), 'error');
+      }
+    })();
+  </script>
+</body>
+</html>
