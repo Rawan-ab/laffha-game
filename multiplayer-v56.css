@@ -1,0 +1,42 @@
+/* Laffha V56 — multiplayer host/controller integration */
+.play-mode-switch{margin:18px 0 8px;padding:14px;border:1px solid #eadff7;border-radius:20px;background:#fffaf7}
+.play-mode-switch h3{margin:0 0 10px;font-size:15px;text-align:center;color:#2b2340}
+.play-mode-options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.play-mode-btn{border:1px solid #dfd4ea;background:#fff;border-radius:16px;padding:14px 12px;font-family:inherit;font-weight:700;color:#4b425b;cursor:pointer}
+.play-mode-btn.active{background:#5f35a7;color:#fff;border-color:#5f35a7;box-shadow:0 8px 22px rgba(95,53,167,.16)}
+.play-mode-btn small{display:block;font-weight:500;opacity:.78;margin-top:4px}
+
+.multi-lobby{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(280px,.6fr);gap:18px;align-items:stretch}
+.multi-lobby-card,.multi-code-card{padding:24px}
+.multi-code-card{text-align:center}
+.multi-room-code{font-size:54px;letter-spacing:8px;font-weight:800;color:#5f35a7;margin:8px 0 14px;direction:ltr}
+.multi-qr{width:190px;height:190px;margin:12px auto 16px;border:1px dashed #cdbbe5;border-radius:22px;display:grid;place-items:center;background:#fff;overflow:hidden}
+.multi-qr img,.multi-qr canvas{max-width:166px!important;max-height:166px!important}
+.multi-join-link{font-size:12px;word-break:break-all;color:#81758f;margin-top:10px;direction:ltr}
+.multi-team-list{display:grid;gap:10px;margin-top:18px}
+.multi-team-row{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid #eadfe8;border-radius:17px;padding:14px 16px;background:#fff}
+.multi-team-info{display:flex;align-items:center;gap:10px}
+.multi-team-dot{width:12px;height:12px;border-radius:50%}
+.multi-team-status{font-size:13px;font-weight:700;color:#8e8792}
+.multi-team-status.connected{color:#23805b}
+.multi-lobby-actions{display:grid;gap:10px;margin-top:18px}
+.multi-test-note{padding:11px 13px;border-radius:14px;background:#faf6ff;color:#6d5e7f;font-size:12px;line-height:1.7}
+.multi-host-badge{position:fixed;left:18px;bottom:18px;z-index:80;background:#2c223a;color:#fff;padding:9px 13px;border-radius:999px;font-size:12px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.14)}
+.la-remote-lock{pointer-events:none!important;user-select:none!important}
+.laffha-multi-host .spin-action,
+.laffha-multi-host .answer-btn,
+.laffha-multi-host .tf-btn,
+.laffha-multi-host .life-btn,
+.laffha-multi-host #next,
+.laffha-multi-host .difficulty,
+.laffha-multi-host .correct-btn,
+.laffha-multi-host .wrong-btn{pointer-events:none!important}
+.laffha-multi-host .lifelines{opacity:.42}
+.laffha-multi-host .question-card:after{content:'الإجابة والتحكم من جوال الفريق';display:block;margin-top:14px;padding:10px 12px;border-radius:13px;background:#f8f3ff;color:#654799;font-size:12px;font-weight:700;text-align:center}
+.multi-waiting-host{padding:16px;border-radius:16px;background:#faf7ff;color:#5f5174;text-align:center;margin-top:12px;font-size:13px}
+
+@media(max-width:820px){
+  .multi-lobby{grid-template-columns:1fr}
+  .play-mode-options{grid-template-columns:1fr}
+  .multi-room-code{font-size:44px}
+}
