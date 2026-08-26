@@ -53,10 +53,11 @@
 
         <div class="test-box">
           <strong>اختبار المرحلة الأولى</strong>
-          <span>افتحوا رابط الدخول من جوالين، أدخلوا نفس رمز الغرفة، ثم اختاروا فريقًا مختلفًا لكل جوال.</span>
+          <span>يكفي جوال واحد للاختبار الآن. إذا اتصل الفريق البنفسجي، تقدرين تتخطين الفريق الثاني مؤقتًا ثم نختبر إرسال أمر من اللابتوب إلى الجوال.</span>
         </div>
 
-        <button class="btn secondary full" style="margin-top:14px" id="startGame" disabled>ابدأ اللعبة — بعد نجاح اختبار الربط</button>
+        <button class="btn secondary full" style="margin-top:14px" id="skipTeam2" disabled>تخطي الفريق الثاني — اختبار بجوال واحد</button>
+        <button class="btn primary full" style="margin-top:10px" id="startGame" disabled>ابدأ الاختبار — بعد اتصال فريق واحد</button>
       </section>
     </div>
   </div>
@@ -77,6 +78,7 @@
       live: document.getElementById('liveStatus'),
       team1: document.getElementById('team1Status'),
       team2: document.getElementById('team2Status'),
+      skipTeam2: document.getElementById('skipTeam2'),
       start: document.getElementById('startGame'),
     };
 
@@ -84,6 +86,8 @@
     let room = null;
     let teamsChannel = null;
     let joinLink = '';
+    let connectedTeams = new Set();
+    let skipSecond = false;
 
     function roomCode() {
       return Array.from({ length: 4 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
@@ -98,6 +102,34 @@
       const el = teamNo === 1 ? els.team1 : els.team2;
       el.className = connected ? 'ready' : 'waiting';
       el.textContent = connected ? 'متصل ✓' : 'في الانتظار';
+    }
+
+    function updateTestControls() {
+      const team1Ready = connectedTeams.has(1);
+      const team2Ready = connectedTeams.has(2);
+      const bothReady = team1Ready && team2Ready;
+      const onePhoneReady = team1Ready && skipSecond;
+
+      els.skipTeam2.disabled = !team1Ready || team2Ready || skipSecond;
+      if (team2Ready) {
+        skipSecond = false;
+        els.skipTeam2.textContent = 'الفريق الثاني متصل ✓';
+      } else if (skipSecond) {
+        els.skipTeam2.textContent = 'تم تخطي الفريق الثاني للاختبار ✓';
+        els.team2.className = 'ready';
+        els.team2.textContent = 'متجاوز للاختبار';
+      } else {
+        els.skipTeam2.textContent = 'تخطي الفريق الثاني — اختبار بجوال واحد';
+      }
+
+      els.start.disabled = !(bothReady || onePhoneReady);
+      if (bothReady) {
+        els.start.textContent = 'ابدأ اختبار التحكم بالفريقين';
+      } else if (onePhoneReady) {
+        els.start.textContent = 'ابدأ اختبار التحكم بجوال واحد';
+      } else {
+        els.start.textContent = 'ابدأ الاختبار — بعد اتصال فريق واحد';
+      }
     }
 
     function makeJoinLink(code) {
@@ -132,12 +164,10 @@
         return;
       }
 
-      const connected = new Set((data || []).filter(t => t.connected).map(t => Number(t.team_no)));
-      setTeamStatus(1, connected.has(1));
-      setTeamStatus(2, connected.has(2));
-      const bothReady = connected.has(1) && connected.has(2);
-      els.start.disabled = !bothReady;
-      els.start.textContent = bothReady ? 'تم ربط الفريقين بنجاح ✓' : 'ابدأ اللعبة — بعد نجاح اختبار الربط';
+      connectedTeams = new Set((data || []).filter(t => t.connected).map(t => Number(t.team_no)));
+      setTeamStatus(1, connectedTeams.has(1));
+      if (!skipSecond || connectedTeams.has(2)) setTeamStatus(2, connectedTeams.has(2));
+      updateTestControls();
     }
 
     function subscribeTeams() {
@@ -230,10 +260,12 @@
       }
 
       room = created;
+      skipSecond = false;
+      connectedTeams = new Set();
       localStorage.setItem('laffhaPrototypeHostRoom', room.id);
       setTeamStatus(1, false);
       setTeamStatus(2, false);
-      els.start.disabled = true;
+      updateTestControls();
       showRoom();
       els.create.disabled = false;
     }
@@ -248,6 +280,32 @@
       } catch (_) {
         setMessage('انسخوا الرابط الظاهر أسفل الزر يدويًا.', 'error');
       }
+    });
+
+    els.skipTeam2.addEventListener('click', () => {
+      if (!connectedTeams.has(1) || connectedTeams.has(2)) return;
+      skipSecond = true;
+      updateTestControls();
+      setMessage('تم تخطي الفريق الثاني لهذا الاختبار فقط. تقدرين الآن تختبرين التحكم من اللابتوب إلى الجوال.', 'success');
+    });
+
+    els.start.addEventListener('click', async () => {
+      if (!room || els.start.disabled) return;
+      els.start.disabled = true;
+      els.start.textContent = 'جاري إرسال أمر الاختبار للجوال…';
+      const { error } = await client
+        .from('game_state')
+        .update({ phase: 'spin', updated_at: new Date().toISOString() })
+        .eq('room_id', room.id);
+
+      if (error) {
+        setMessage(`تعذر بدء الاختبار: ${readableError(error)}`, 'error');
+        updateTestControls();
+        return;
+      }
+
+      els.start.textContent = 'تم إرسال الأمر للجوال ✓';
+      setMessage('راقبي الجوال الآن: المفروض ينتقل تلقائيًا إلى شاشة «اللعبة بدأت» بدون Refresh.', 'success');
     });
 
     els.create.addEventListener('click', createRoom);
