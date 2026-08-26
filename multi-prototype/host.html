@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>لفّها | شاشة العرض</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="shell">
+    <div class="top">
+      <div class="brand">لفّها</div>
+      <div class="tag">شاشة العرض · Realtime Prototype</div>
+    </div>
+
+    <div class="host-grid">
+      <section class="card room-card">
+        <div class="label">رمز الغرفة</div>
+        <div class="room-code" id="roomCode">----</div>
+        <div class="qr real-qr" id="qr"><span>أنشئ غرفة أولًا</span></div>
+
+        <button class="btn primary full" id="createRoom" disabled>جاري الاتصال…</button>
+        <button class="btn secondary full hidden" id="copyLink" type="button">نسخ رابط دخول الفرق</button>
+
+        <div class="connection-note" id="hostMessage">جاري تجهيز اتصال Supabase…</div>
+        <div class="join-url hidden" id="joinUrl"></div>
+      </section>
+
+      <section class="card status-card">
+        <div class="status-heading">
+          <div>
+            <h2>الفرق المتصلة</h2>
+            <div class="label">تتحدث الحالة مباشرة بدون Refresh</div>
+          </div>
+          <span class="live-pill" id="liveStatus">● اتصال…</span>
+        </div>
+
+        <div class="team-row" id="team1Row">
+          <div class="team-meta">
+            <span class="dot" style="background:var(--purple2)"></span>
+            <div><strong>الفريق البنفسجي</strong><div class="label">جوال الفريق 1</div></div>
+          </div>
+          <span class="waiting" id="team1Status">في الانتظار</span>
+        </div>
+
+        <div class="team-row" id="team2Row">
+          <div class="team-meta">
+            <span class="dot" style="background:var(--blue)"></span>
+            <div><strong>الفريق الأزرق</strong><div class="label">جوال الفريق 2</div></div>
+          </div>
+          <span class="waiting" id="team2Status">في الانتظار</span>
+        </div>
+
+        <div class="test-box">
+          <strong>اختبار المرحلة الأولى</strong>
+          <span>افتحوا رابط الدخول من جوالين، أدخلوا نفس رمز الغرفة، ثم اختاروا فريقًا مختلفًا لكل جوال.</span>
+        </div>
+
+        <button class="btn secondary full" style="margin-top:14px" id="startGame" disabled>ابدأ اللعبة — بعد نجاح اختبار الربط</button>
+      </section>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    const { client, ensureSession, readableError } = window.LaffhaRealtime;
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    const els = {
+      code: document.getElementById('roomCode'),
+      qr: document.getElementById('qr'),
+      create: document.getElementById('createRoom'),
+      copy: document.getElementById('copyLink'),
+      message: document.getElementById('hostMessage'),
+      joinUrl: document.getElementById('joinUrl'),
+      live: document.getElementById('liveStatus'),
+      team1: document.getElementById('team1Status'),
+      team2: document.getElementById('team2Status'),
+      start: document.getElementById('startGame'),
+    };
+
+    let user = null;
+    let room = null;
+    let teamsChannel = null;
+    let joinLink = '';
+
+    function roomCode() {
+      return Array.from({ length: 4 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+    }
+
+    function setMessage(text, type = '') {
+      els.message.textContent = text;
+      els.message.className = `connection-note ${type}`.trim();
+    }
+
+    function setTeamStatus(teamNo, connected) {
+      const el = teamNo === 1 ? els.team1 : els.team2;
+      el.className = connected ? 'ready' : 'waiting';
+      el.textContent = connected ? 'متصل ✓' : 'في الانتظار';
+    }
+
+    function makeJoinLink(code) {
+      const url = new URL('join.html', window.location.href);
+      url.search = '';
+      url.searchParams.set('room', code);
+      return url.toString();
+    }
+
+    function renderQr(url) {
+      els.qr.innerHTML = '';
+      if (window.QRCode) {
+        new QRCode(els.qr, { text: url, width: 166, height: 166, correctLevel: QRCode.CorrectLevel.M });
+      } else {
+        const a = document.createElement('a');
+        a.href = url;
+        a.textContent = 'فتح رابط الدخول';
+        els.qr.appendChild(a);
+      }
+    }
+
+    async function loadTeams() {
+      if (!room) return;
+      const { data, error } = await client
+        .from('room_teams')
+        .select('team_no,connected,last_seen')
+        .eq('room_id', room.id)
+        .order('team_no');
+
+      if (error) {
+        setMessage(`تعذر تحديث الفرق: ${readableError(error)}`, 'error');
+        return;
+      }
+
+      const connected = new Set((data || []).filter(t => t.connected).map(t => Number(t.team_no)));
+      setTeamStatus(1, connected.has(1));
+      setTeamStatus(2, connected.has(2));
+      const bothReady = connected.has(1) && connected.has(2);
+      els.start.disabled = !bothReady;
+      els.start.textContent = bothReady ? 'تم ربط الفريقين بنجاح ✓' : 'ابدأ اللعبة — بعد نجاح اختبار الربط';
+    }
+
+    function subscribeTeams() {
+      if (!room) return;
+      if (teamsChannel) client.removeChannel(teamsChannel);
+
+      teamsChannel = client
+        .channel(`laffha-room-teams-${room.id}`)
+        .on('postgres_changes', {
+          event: '*', schema: 'public', table: 'room_teams', filter: `room_id=eq.${room.id}`
+        }, loadTeams)
+        .subscribe(status => {
+          if (status === 'SUBSCRIBED') {
+            els.live.textContent = '● مباشر';
+            els.live.className = 'live-pill online';
+          } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+            els.live.textContent = '● تعذر الربط';
+            els.live.className = 'live-pill offline';
+          }
+        });
+    }
+
+    function showRoom() {
+      els.code.textContent = room.code;
+      joinLink = makeJoinLink(room.code);
+      els.joinUrl.textContent = joinLink;
+      els.joinUrl.classList.remove('hidden');
+      els.copy.classList.remove('hidden');
+      els.create.textContent = 'إنشاء غرفة جديدة';
+      renderQr(joinLink);
+      setMessage('الغرفة جاهزة. افتحوا الرابط أو امسحوا الـQR من الجوال.', 'success');
+      loadTeams();
+      subscribeTeams();
+    }
+
+    async function resumeRoom() {
+      const savedId = localStorage.getItem('laffhaPrototypeHostRoom');
+      if (!savedId) return false;
+      const { data, error } = await client
+        .from('rooms')
+        .select('*')
+        .eq('id', savedId)
+        .eq('host_user_id', user.id)
+        .gt('expires_at', new Date().toISOString())
+        .maybeSingle();
+      if (error || !data || data.status === 'finished') {
+        localStorage.removeItem('laffhaPrototypeHostRoom');
+        return false;
+      }
+      room = data;
+      showRoom();
+      return true;
+    }
+
+    async function createRoom() {
+      els.create.disabled = true;
+      setMessage('جاري إنشاء الغرفة…');
+
+      if (room) {
+        await client.from('rooms').update({ status: 'finished' }).eq('id', room.id);
+        if (teamsChannel) await client.removeChannel(teamsChannel);
+        room = null;
+      }
+
+      let created = null;
+      let lastError = null;
+      for (let attempt = 0; attempt < 8 && !created; attempt++) {
+        const code = roomCode();
+        const { data, error } = await client
+          .from('rooms')
+          .insert({ code, host_user_id: user.id, max_teams: 2 })
+          .select('*')
+          .single();
+        if (!error) created = data;
+        else if (error.code !== '23505') { lastError = error; break; }
+      }
+
+      if (!created) {
+        setMessage(`تعذر إنشاء الغرفة: ${readableError(lastError || 'تعذر توليد رمز فريد')}`, 'error');
+        els.create.disabled = false;
+        return;
+      }
+
+      const { error: stateError } = await client.from('game_state').insert({ room_id: created.id, phase: 'lobby' });
+      if (stateError) {
+        await client.from('rooms').delete().eq('id', created.id);
+        setMessage(`تعذر تجهيز حالة اللعبة: ${readableError(stateError)}`, 'error');
+        els.create.disabled = false;
+        return;
+      }
+
+      room = created;
+      localStorage.setItem('laffhaPrototypeHostRoom', room.id);
+      setTeamStatus(1, false);
+      setTeamStatus(2, false);
+      els.start.disabled = true;
+      showRoom();
+      els.create.disabled = false;
+    }
+
+    els.copy.addEventListener('click', async () => {
+      if (!joinLink) return;
+      try {
+        await navigator.clipboard.writeText(joinLink);
+        const original = els.copy.textContent;
+        els.copy.textContent = 'تم نسخ الرابط ✓';
+        setTimeout(() => els.copy.textContent = original, 1400);
+      } catch (_) {
+        setMessage('انسخوا الرابط الظاهر أسفل الزر يدويًا.', 'error');
+      }
+    });
+
+    els.create.addEventListener('click', createRoom);
+
+    (async function init() {
+      try {
+        user = await ensureSession();
+        els.create.disabled = false;
+        els.create.textContent = 'إنشاء غرفة';
+        els.live.textContent = '● جاهز';
+        await resumeRoom();
+        if (!room) setMessage('الاتصال جاهز. اضغط «إنشاء غرفة» لبدء الاختبار.', 'success');
+      } catch (error) {
+        els.live.textContent = '● غير متصل';
+        els.live.className = 'live-pill offline';
+        els.create.disabled = true;
+        setMessage(readableError(error), 'error');
+      }
+    })();
+  </script>
+</body>
+</html>
