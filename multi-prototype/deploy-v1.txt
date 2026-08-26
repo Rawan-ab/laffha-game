@@ -1,0 +1,2 @@
+Laffha multiplayer prototype deployment trigger.
+Realtime prototype synced to main for Vercel testing.
