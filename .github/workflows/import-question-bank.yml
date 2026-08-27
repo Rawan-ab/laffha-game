@@ -1,0 +1,25 @@
+name: Import private question bank
+
+on:
+  push:
+    paths:
+      - '.github/workflows/import-question-bank.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Import bank to Supabase
+        run: |
+          response=$(curl --fail-with-body -sS \
+            -X POST 'https://ntklwkzrozyfgzwwkvfr.supabase.co/functions/v1/laffha-bank-import' \
+            -H 'content-type: application/json' \
+            -H 'x-migration-key: laffha-v62-import-8f5e7c93d441' \
+            --data-binary @migration/question-bank-export.json)
+          echo "$response"
+          echo "$response" | grep -q '"ok":true'
