@@ -1,5 +1,5 @@
-// Laffha V56 — integrated Host + phone-controller multiplayer mode.
-// Solo mode remains unchanged. Multiplayer V56 intentionally starts with choice/logo questions.
+// Laffha V56/V62 — integrated Host + phone-controller multiplayer mode.
+// Compatible with legacy banks and the sanitized V62 bank.
 (function(){
   const RT=window.LaffhaRealtime;
   if(!RT||typeof state==='undefined'||typeof render!=='function')return;
@@ -25,12 +25,14 @@
   const isMulti=()=>state.playMode==='multi';
   const isMultiPlaying=()=>isMulti()&&state.multiRoom&&state.multiRoom.status==='playing';
   const code4=()=>String(Math.floor(1000+Math.random()*9000));
-  const controllerBase='https://rawan-ab.github.io/laffha-game/controller.html';
+  const controllerBase=()=>new URL('controller.html',window.location.href).toString();
   const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  const answerButtons=()=>[...document.querySelectorAll('[data-secure-answer],[data-answer]')];
+  const answerValue=b=>String(b?.dataset?.secureAnswer??b?.dataset?.answer??'');
 
   function currentControllerUrl(){
-    if(!state.multiRoom)return controllerBase;
-    const u=new URL(controllerBase);u.searchParams.set('room',state.multiRoom.code);return u.toString();
+    if(!state.multiRoom)return controllerBase();
+    const u=new URL(controllerBase());u.searchParams.set('room',state.multiRoom.code);return u.toString();
   }
 
   function clearMultiUi(){
@@ -82,7 +84,7 @@
         if(!error)created=data;else if(error.code!=='23505'){lastError=error;break;}
       }
       if(!created)throw lastError||new Error('تعذر إنشاء رمز غرفة فريد');
-      const lobbyPayload={teams:teamPayload(),rounds:state.rounds,mode:'multiplayer-v56'};
+      const lobbyPayload={teams:teamPayload(),rounds:state.rounds,mode:'multiplayer-v62'};
       const {error:gsError}=await client.from('game_state').insert({room_id:created.id,phase:'lobby',current_team:1,current_round:1,revision:1,question_payload:lobbyPayload});
       if(gsError){await client.from('rooms').delete().eq('id',created.id);throw gsError;}
       state.multiRoom=created;state.multiRevision=1;state.multiConnectedTeams=[];state.multiActiveTeams=[];state.multiTestMode=false;
@@ -178,10 +180,10 @@
     if(phase==='start_question')return {...base,category:CATS[state.selectedCategory]?.name||'',categoryEmoji:CATS[state.selectedCategory]?.emoji||'',points:state.drawnPoints||state.currentQuestion?.points||0,difficulty:state.drawnDifficulty||''};
     if(phase==='question'){
       const q=state.currentQuestion||{};
-      const options=[...document.querySelectorAll('[data-answer]')].filter(b=>!b.classList.contains('hidden-answer')).map(b=>b.dataset.answer).filter(Boolean);
+      const options=answerButtons().filter(b=>!b.classList.contains('hidden-answer')).map(answerValue).filter(Boolean);
       return {...base,questionText:q.questionText||'',questionType:q.questionType||'',category:CATS[q.category]?.name||'',points:Number(state.currentAwardPoints??q.points??0),options};
     }
-    if(phase==='result')return {...base,status:state.lastResult,correctAnswer:state.currentQuestion?.correctAnswer||'',points:Number(state.currentAwardPoints??state.currentQuestion?.points??0)};
+    if(phase==='result')return {...base,status:state.lastResult,points:Number(state.currentAwardPoints??state.currentQuestion?.points??0)};
     if(phase==='finished')return {...base,ranking:[...state.teams].sort((a,b)=>b.score-a.score).map(t=>({name:t.name,score:t.score}))};
     return base;
   }
@@ -233,8 +235,9 @@
       const btn=document.getElementById('spinBtn');if(btn&&(btn.classList.contains('points-ready')||/ابدأ السؤال/.test(btn.textContent||'')))btn.click();return;
     }
     if(type==='answer'&&state.screen==='question'){
+      if(payload.typed===true)return; // V62 typed handler verifies it server-side.
       const wanted=String(payload.answer??'');
-      const btn=[...document.querySelectorAll('[data-answer]')].find(b=>String(b.dataset.answer)===wanted);
+      const btn=answerButtons().find(b=>answerValue(b)===wanted);
       if(btn)btn.click();
       return;
     }
@@ -252,7 +255,6 @@
     },100);
   }
 
-  // Keep the rich solo question bank untouched. In multiplayer V56, select controller-safe choice/logo questions.
   pickQuestion=function(diff,excludeCurrent=false){
     if(!isMultiPlaying())return oldPickQuestion(diff,excludeCurrent);
     const full=[...QUESTIONS];
@@ -290,5 +292,5 @@
   };
 
   if(state.screen==='setup')render();
-  console.info('Laffha V56 multiplayer host ready');
+  console.info('Laffha V62-compatible multiplayer host ready');
 })();
