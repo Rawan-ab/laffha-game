@@ -1,0 +1,34 @@
+name: Export private question bank
+
+on:
+  push:
+    paths:
+      - 'tools/export-question-bank.mjs'
+      - '.github/workflows/export-question-bank.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  export:
+    if: ${{ !contains(github.event.head_commit.message || '', '[skip bank export]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save jsdom@26
+      - run: node tools/export-question-bank.mjs
+      - name: Commit export
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add migration/question-bank-export.json
+          if git diff --cached --quiet; then
+            echo "No export changes"
+          else
+            git commit -m "Update private question bank export [skip bank export]"
+            git push
+          fi
