@@ -1,4 +1,4 @@
-name: Supabase V62 E2E
+name: Supabase V63 E2E
 on:
   push:
     branches: [main]
@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Verify server-side answer checking
+      - name: Verify optimized server-side answer checking
         shell: bash
         run: |
           node <<'NODE'
@@ -26,9 +26,10 @@ jobs:
           const auth=await post('/auth/v1/signup',{});
           const token=auth.access_token || auth.session?.access_token;
           if(!token) throw new Error('Anonymous auth did not return access token');
+          const started=Date.now();
           const good=await post('/functions/v1/laffha-answer',{questionId:'gen27-e-20',answer:'المحيط الهادئ، المحيط الأطلسي، المحيط الهندي، المحيط الجنوبي، المحيط المتجمد الشمالي',teamNo:1,mode:'answer'},token);
           if(good.correct!==true) throw new Error('Known correct answer was rejected');
           const bad=await post('/functions/v1/laffha-answer',{questionId:'gen27-e-20',answer:'إجابة خاطئة تمامًا',teamNo:1,mode:'answer'},token);
           if(bad.correct!==false) throw new Error('Known wrong answer was accepted');
-          console.log('SUPABASE_V62_E2E_OK');
+          console.log(`SUPABASE_V63_E2E_OK ${Date.now()-started}ms`);
           NODE
