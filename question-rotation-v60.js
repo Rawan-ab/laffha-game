@@ -8,8 +8,8 @@
   const save=d=>{try{localStorage.setItem(KEY,JSON.stringify(d));}catch(_){}};
   const qKey=q=>typeof laffhaQuestionKey==='function'?laffhaQuestionKey(q):`${q.category||''}::${q.questionID||q.questionText||''}::${q.correctAnswer||''}`;
   const catStore=(db,cat)=>db.cats[cat]||(db.cats[cat]={seq:0,items:{},meta:[]});
-  const recentMeta=(cat,n=10)=>{const db=safeParse(),s=catStore(db,cat);return (s.meta||[]).slice(-n);};
   const sameGameUsed=q=>state.usedQuestions?.has(qKey(q))||state.usedQuestions?.has(q.questionID);
+  const legacyRecent=cat=>{try{const h=typeof loadLaffhaHistory==='function'?loadLaffhaHistory():{};return new Set((h?.[cat]||[]).slice(-24));}catch(_){return new Set();}};
 
   function cooldowns(uniqueCount){
     return {
@@ -17,7 +17,6 @@
       correct:Math.min(90,Math.max(30,Math.floor(uniqueCount*.80)))
     };
   }
-  function infoFor(cat,key){const db=safeParse(),s=catStore(db,cat);return {db,s,item:s.items[key]||null};}
   function recordSelection(q){
     const key=qKey(q),db=safeParse(),s=catStore(db,q.category);s.seq=Number(s.seq||0)+1;
     const item=s.items[key]||{};item.last=s.seq;item.seen=(item.seen||0)+1;s.items[key]=item;
@@ -54,8 +53,7 @@
     if(q.subCategory&&q.subCategory!==last.sub)score+=5;else if(q.subCategory)score-=3;
     if(q.eraTag&&q.eraTag!==last.era)score+=2;
     if(prev.region&&q.regionTag&&q.regionTag!==prev.region)score+=2;
-    score+=artistScore(q,meta);
-    return score;
+    return score+artistScore(q,meta);
   }
 
   pickQuestion=function(diff,excludeCurrent=false){
@@ -64,16 +62,20 @@
     if(state.playMode==='multi'&&state.multiRoom?.status==='playing')source=source.filter(q=>['mcq','logo'].includes(q.questionType));
     const unique=[];const seen=new Set();for(const q of source){const k=qKey(q);if(!seen.has(k)){seen.add(k);unique.push(q);}}
     if(!unique.length){toast('ما فيه سؤال متاح حاليًا');return;}
-    const db=safeParse(),s=catStore(db,cat),cd=cooldowns(unique.length),seq=Number(s.seq||0);
+
+    const db=safeParse(),s=catStore(db,cat),cd=cooldowns(unique.length),seq=Number(s.seq||0),legacy=legacyRecent(cat);
     const baseOk=q=>!sameGameUsed(q)&&(!excludeCurrent||qKey(q)!==currentKey);
-    const strict=q=>{if(!baseOk(q))return false;const it=s.items[qKey(q)];if(!it)return true;if(it.correct&&seq-it.correct<cd.correct)return false;if(it.last&&seq-it.last<cd.seen)return false;return true;};
-    const keepCorrect=q=>{if(!baseOk(q))return false;const it=s.items[qKey(q)];return !(it?.correct&&seq-it.correct<cd.correct);};
+    const strict=q=>{if(!baseOk(q))return false;const key=qKey(q),it=s.items[key];if(!it&&legacy.has(key))return false;if(!it)return true;if(it.correct&&seq-it.correct<cd.correct)return false;if(it.last&&seq-it.last<cd.seen)return false;return true;};
+    const keepCorrect=q=>{if(!baseOk(q))return false;const key=qKey(q),it=s.items[key];if(!it&&legacy.has(key))return false;return !(it?.correct&&seq-it.correct<cd.correct);};
     const soft=q=>{if(!baseOk(q))return false;const it=s.items[qKey(q)];if(it?.correct&&seq-it.correct<Math.min(18,cd.correct))return false;if(it?.last&&seq-it.last<Math.min(8,cd.seen))return false;return true;};
-    const choosePool=(fn)=>{let p=unique.filter(q=>q.difficulty===diff&&fn(q));if(!p.length)p=unique.filter(fn);return p;};
+    const choosePool=fn=>{let p=unique.filter(q=>q.difficulty===diff&&fn(q));if(!p.length)p=unique.filter(fn);return p;};
     let pool=choosePool(strict);if(!pool.length)pool=choosePool(keepCorrect);if(!pool.length)pool=choosePool(soft);if(!pool.length)pool=unique.filter(baseOk);if(!pool.length)pool=unique.filter(q=>!excludeCurrent||qKey(q)!==currentKey);
     if(!pool.length){toast('ما فيه سؤال جديد متاح حاليًا');return;}
-    const meta=(s.meta||[]).slice(-12);pool.sort((a,b)=>diversityScore(b,meta)-diversityScore(a,meta));
-    const top=pool.slice(0,Math.max(1,Math.ceil(pool.length*.25)));state.currentQuestion=top[Math.floor(Math.random()*top.length)];
+
+    const meta=(s.meta||[]).slice(-12);
+    const scored=pool.map(q=>({q,score:diversityScore(q,meta)})).sort((a,b)=>b.score-a.score);
+    const top=scored.slice(0,Math.max(1,Math.ceil(scored.length*.25))).map(x=>x.q);
+    state.currentQuestion=top[Math.floor(Math.random()*top.length)];
     const key=qKey(state.currentQuestion);state.usedQuestions?.add(key);recordSelection(state.currentQuestion);
     state.currentAwardPoints=state.drawnPoints||state.currentQuestion.points;state.usedChoiceAssist=false;state.deadline=Date.now()+60000;state.screen='question';render();
   };
