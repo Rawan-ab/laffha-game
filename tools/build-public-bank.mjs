@@ -14,6 +14,11 @@ function seededShuffle(values, seedText){
   return a;
 }
 function uniqueStrings(arr){return [...new Set(arr.filter(v=>v!==undefined&&v!==null&&String(v).trim()!=='').map(v=>String(v)))];}
+function shuffledDifferent(values,seed){
+  const source=uniqueStrings(values),out=seededShuffle(source,seed);
+  if(out.length>1&&out.every((v,i)=>v===source[i]))out.push(out.shift());
+  return out;
+}
 
 const sensitive = new Set(['correctAnswer','acceptedAnswers','aliases','correctOrder','expectedOrder','correctSequence','solution']);
 const publicQuestions = questions.map((q,i)=>{
@@ -23,6 +28,9 @@ const publicQuestions = questions.map((q,i)=>{
   out.secureAnswer=true;
   if(['mcq','logo'].includes(String(q.questionType||''))){
     out.options=seededShuffle(uniqueStrings([...(Array.isArray(q.wrongAnswers)?q.wrongAnswers:[]),q.correctAnswer]),out.questionID);
+  }
+  if(String(q.questionType||'')==='ordering'){
+    out.items=shuffledDifferent(Array.isArray(q.items)?q.items:[],`${out.questionID}:ordering`);
   }
   return out;
 });
