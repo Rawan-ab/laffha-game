@@ -13,7 +13,7 @@ function seededShuffle(values, seedText){
   }
   return a;
 }
-function unique(arr){return [...new Set(arr.filter(v=>v!==undefined&&v!==null&&String(v).trim()!==''))];}
+function uniqueStrings(arr){return [...new Set(arr.filter(v=>v!==undefined&&v!==null&&String(v).trim()!=='').map(v=>String(v)))];}
 
 const sensitive = new Set(['correctAnswer','acceptedAnswers','aliases','correctOrder','expectedOrder','correctSequence','solution']);
 const publicQuestions = questions.map((q,i)=>{
@@ -22,12 +22,15 @@ const publicQuestions = questions.map((q,i)=>{
   out.questionID=String(q.questionID||`generated-${i+1}`);
   out.secureAnswer=true;
   if(['mcq','logo'].includes(String(q.questionType||''))){
-    out.options=seededShuffle(unique([...(Array.isArray(q.wrongAnswers)?q.wrongAnswers:[]),q.correctAnswer]),out.questionID);
+    out.options=seededShuffle(uniqueStrings([...(Array.isArray(q.wrongAnswers)?q.wrongAnswers:[]),q.correctAnswer]),out.questionID);
   }
   return out;
 });
 
 const js = `// AUTO-GENERATED from private question bank. No correct answers are stored in this file.\nconst QUESTIONS = ${JSON.stringify(publicQuestions)};\n`;
+for(const forbidden of ['"correctAnswer"','"acceptedAnswers"','"aliases"','"wrongAnswers"']){
+  if(js.includes(forbidden)) throw new Error(`Sensitive field leaked into public bank: ${forbidden}`);
+}
 fs.writeFileSync('public-question-bank.js',js);
 
 const html=fs.readFileSync('index.html','utf8');
