@@ -1,5 +1,4 @@
-// V57 — multiplayer state sync guard.
-// Ensures the Host persists visual phase changes to Supabase and reconciles revision numbers.
+// V57/V62 — multiplayer state sync guard without exposing correct answers.
 (function(){
   const RT=window.LaffhaRealtime;
   if(!RT||typeof state==='undefined')return;
@@ -9,6 +8,8 @@
 
   const isPlaying=()=>state.playMode==='multi'&&state.multiRoom?.id&&state.multiRoom?.status==='playing';
   const teamPayload=()=>state.teams.map((t,i)=>({teamNo:i+1,name:t.name,color:t.color,members:t.members||[],score:t.score||0}));
+  const answerButtons=()=>[...document.querySelectorAll('[data-secure-answer],[data-answer]')];
+  const answerValue=b=>String(b?.dataset?.secureAnswer??b?.dataset?.answer??'');
 
   function detectPhase(){
     if(state.screen==='spin'){
@@ -28,10 +29,10 @@
     if(phase==='start_question')return {...base,category:CATS[state.selectedCategory]?.name||'',categoryEmoji:CATS[state.selectedCategory]?.emoji||'',points:state.drawnPoints||state.currentQuestion?.points||0,difficulty:state.drawnDifficulty||''};
     if(phase==='question'){
       const q=state.currentQuestion||{};
-      const options=[...document.querySelectorAll('[data-answer]')].filter(b=>!b.classList.contains('hidden-answer')).map(b=>b.dataset.answer).filter(Boolean);
+      const options=answerButtons().filter(b=>!b.classList.contains('hidden-answer')).map(answerValue).filter(Boolean);
       return {...base,questionText:q.questionText||'',questionType:q.questionType||'',category:CATS[q.category]?.name||'',points:Number(state.currentAwardPoints??q.points??0),options};
     }
-    if(phase==='result')return {...base,status:state.lastResult,correctAnswer:state.currentQuestion?.correctAnswer||'',points:Number(state.currentAwardPoints??state.currentQuestion?.points??0)};
+    if(phase==='result')return {...base,status:state.lastResult,points:Number(state.currentAwardPoints??state.currentQuestion?.points??0)};
     if(phase==='finished')return {...base,ranking:[...state.teams].sort((a,b)=>b.score-a.score).map(t=>({name:t.name,score:t.score}))};
     return base;
   }
@@ -72,5 +73,5 @@
   observer.observe(document.documentElement,{subtree:true,childList:true,attributes:true,characterData:true});
   setInterval(()=>reconcile(true),1500);
   window.addEventListener('focus',()=>reconcile(true));
-  console.info('Laffha V57 multiplayer sync guard ready');
+  console.info('Laffha V62-safe multiplayer sync guard ready');
 })();
