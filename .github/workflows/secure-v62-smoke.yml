@@ -1,0 +1,26 @@
+name: Secure V62 smoke test
+
+on:
+  push:
+    paths:
+      - 'public-question-bank.js'
+      - 'secure-runtime-v62.js'
+      - 'question-rotation-secure-v62.js'
+      - 'secure-v62.html'
+      - 'tools/smoke-secure-v62.mjs'
+      - '.github/workflows/secure-v62-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save jsdom@26
+      - run: node tools/smoke-secure-v62.mjs
