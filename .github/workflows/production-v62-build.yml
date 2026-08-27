@@ -7,6 +7,7 @@ on:
       - 'secure-v62.html'
       - 'public-question-bank.js'
       - 'secure-runtime-v62.js'
+      - 'lifelines-once-v62.js'
       - 'multiplayer-v56.js'
       - 'multiplayer-sync-v57.js'
       - 'multiplayer-typed-secure-v62.js'
@@ -28,8 +29,10 @@ jobs:
           test -f dist/index.html
           test -f dist/controller.html
           test -f dist/public-question-bank.js
+          test -f dist/lifelines-once-v62.js
           test ! -e dist/questions.js
           test ! -e dist/migration/question-bank-export.json
           ! grep -q '"correctAnswer"' dist/public-question-bank.js
           ! grep -q '"acceptedAnswers"' dist/public-question-bank.js
+          grep -q 'lifelines-once-v62.js' dist/index.html
           echo PRODUCTION_V62_SECURITY_OK
