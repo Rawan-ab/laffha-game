@@ -23,6 +23,7 @@ const publicFiles=[
   'game-patch-v4.js',
   'supabase-config.js',
   'secure-runtime-v62.js',
+  'lifelines-once-v62.js',
   'setup-design-v15.js',
   'question-rotation-secure-v62.js',
   'multiplayer-v56.js',
