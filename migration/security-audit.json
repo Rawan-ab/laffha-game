@@ -1,0 +1,292 @@
+{
+  "sourceVersion": "61",
+  "total": 575,
+  "audit": [
+    {
+      "file": "questions.js",
+      "hits": [
+        "correctAnswer",
+        "wrongAnswers"
+      ]
+    },
+    {
+      "file": "extra-questions.js",
+      "hits": [
+        "correctAnswer",
+        "wrongAnswers"
+      ]
+    },
+    {
+      "file": "tv-bank-v27.js",
+      "hits": [
+        "correctAnswer",
+        "wrongAnswers"
+      ]
+    },
+    {
+      "file": "general-bank-v27.js",
+      "hits": [
+        "correctAnswer",
+        "wrongAnswers"
+      ]
+    },
+    {
+      "file": "movies-bank-v29.js",
+      "hits": [
+        "correctAnswer",
+        "wrongAnswers"
+      ]
+    },
+    {
+      "file": "songs-bank-v29.js",
+      "hits": [
+        "correctAnswer",
+        "wrongAnswers"
+      ]
+    },
+    {
+      "file": "artists-bank-v29.js",
+      "hits": [
+        "correctAnswer",
+        "wrongAnswers"
+      ]
+    },
+    {
+      "file": "cartoons-bank-v29.js",
+      "hits": [
+        "correctAnswer",
+        "wrongAnswers"
+      ]
+    },
+    {
+      "file": "sports-bank-v29.js",
+      "hits": [
+        "correctAnswer",
+        "wrongAnswers"
+      ]
+    },
+    {
+      "file": "logos-bank-v29.js",
+      "hits": [
+        "correctAnswer",
+        "wrongAnswers"
+      ]
+    },
+    {
+      "file": "app.js",
+      "hits": [
+        "correctAnswer",
+        "wrongAnswers"
+      ]
+    },
+    {
+      "file": "game-patch-v2.js",
+      "hits": [
+        "correctAnswer",
+        "wrongAnswers"
+      ]
+    },
+    {
+      "file": "game-patch-v3.js",
+      "hits": [
+        "correctAnswer",
+        "wrongAnswers"
+      ]
+    },
+    {
+      "file": "song-fill-patch.js",
+      "hits": [
+        "correctAnswer",
+        "wrongAnswers"
+      ]
+    },
+    {
+      "file": "final-polish-v11.js",
+      "hits": [
+        "correctAnswer",
+        "wrongAnswers"
+      ]
+    },
+    {
+      "file": "global-entertainment-v38.js",
+      "hits": [
+        "correctAnswer",
+        "wrongAnswers"
+      ]
+    },
+    {
+      "file": "bank-audit-v30.js",
+      "hits": [
+        "correctAnswer",
+        "wrongAnswers"
+      ]
+    },
+    {
+      "file": "question-history-v13.js",
+      "hits": [
+        "correctAnswer"
+      ]
+    },
+    {
+      "file": "question-diversity-v27.js",
+      "hits": [
+        "correctAnswer"
+      ]
+    },
+    {
+      "file": "question-quality-v34.js",
+      "hits": [
+        "correctAnswer",
+        "wrongAnswers"
+      ]
+    },
+    {
+      "file": "question-audit-v37.js",
+      "hits": [
+        "correctAnswer",
+        "wrongAnswers"
+      ]
+    },
+    {
+      "file": "logos-v38.js",
+      "hits": [
+        "correctAnswer",
+        "wrongAnswers"
+      ]
+    },
+    {
+      "file": "question-diversity-v38.js",
+      "hits": [
+        "correctAnswer"
+      ]
+    },
+    {
+      "file": "logos-v39.js",
+      "hits": [
+        "correctAnswer",
+        "wrongAnswers"
+      ]
+    },
+    {
+      "file": "question-diversity-v39.js",
+      "hits": [
+        "correctAnswer"
+      ]
+    },
+    {
+      "file": "format-variety-v40.js",
+      "hits": [
+        "correctAnswer",
+        "wrongAnswers"
+      ]
+    },
+    {
+      "file": "content-expansion-v44.js",
+      "hits": [
+        "correctAnswer",
+        "wrongAnswers"
+      ]
+    },
+    {
+      "file": "cartoon-balance-v41.js",
+      "hits": [
+        "correctAnswer",
+        "wrongAnswers"
+      ]
+    },
+    {
+      "file": "question-quality-v42.js",
+      "hits": [
+        "correctAnswer",
+        "wrongAnswers"
+      ]
+    },
+    {
+      "file": "difficulty-hardening-v45.js",
+      "hits": [
+        "correctAnswer",
+        "wrongAnswers"
+      ]
+    },
+    {
+      "file": "artist-hardening-v48.js",
+      "hits": [
+        "correctAnswer",
+        "wrongAnswers"
+      ]
+    },
+    {
+      "file": "logos-general-v50.js",
+      "hits": [
+        "correctAnswer",
+        "wrongAnswers"
+      ]
+    },
+    {
+      "file": "visual-category-v54.js",
+      "hits": [
+        "correctAnswer",
+        "wrongAnswers"
+      ]
+    },
+    {
+      "file": "song-balance-v60.js",
+      "hits": [
+        "correctAnswer",
+        "wrongAnswers"
+      ]
+    },
+    {
+      "file": "qa-audit-v46.js",
+      "hits": [
+        "correctAnswer",
+        "wrongAnswers"
+      ]
+    },
+    {
+      "file": "ordering-rank-v37.js",
+      "hits": [
+        "correctAnswer"
+      ]
+    },
+    {
+      "file": "assistance-cost-v43.js",
+      "hits": [
+        "correctAnswer",
+        "wrongAnswers"
+      ]
+    },
+    {
+      "file": "choice-engine-v52.js",
+      "hits": [
+        "correctAnswer",
+        "wrongAnswers"
+      ]
+    },
+    {
+      "file": "multiplayer-v56.js",
+      "hits": [
+        "correctAnswer"
+      ]
+    },
+    {
+      "file": "multiplayer-sync-v57.js",
+      "hits": [
+        "correctAnswer"
+      ]
+    },
+    {
+      "file": "multiplayer-typed-v58.js",
+      "hits": [
+        "correctAnswer",
+        "acceptedAnswers"
+      ]
+    },
+    {
+      "file": "question-rotation-v60.js",
+      "hits": [
+        "correctAnswer"
+      ]
+    }
+  ]
+}
