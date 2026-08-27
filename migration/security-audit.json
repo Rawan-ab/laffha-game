@@ -264,18 +264,6 @@
       ]
     },
     {
-      "file": "multiplayer-v56.js",
-      "hits": [
-        "correctAnswer"
-      ]
-    },
-    {
-      "file": "multiplayer-sync-v57.js",
-      "hits": [
-        "correctAnswer"
-      ]
-    },
-    {
       "file": "multiplayer-typed-v58.js",
       "hits": [
         "correctAnswer",
