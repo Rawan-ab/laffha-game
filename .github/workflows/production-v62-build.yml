@@ -1,0 +1,35 @@
+name: Production V62 build
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/build-production-v62.mjs'
+      - 'secure-v62.html'
+      - 'public-question-bank.js'
+      - 'secure-runtime-v62.js'
+      - 'multiplayer-v56.js'
+      - 'multiplayer-sync-v57.js'
+      - 'multiplayer-typed-secure-v62.js'
+      - 'controller.html'
+      - 'vercel.json'
+      - '.github/workflows/production-v62-build.yml'
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node tools/build-production-v62.mjs
+      - name: Verify private bank is not deployable
+        run: |
+          test -f dist/index.html
+          test -f dist/controller.html
+          test -f dist/public-question-bank.js
+          test ! -e dist/questions.js
+          test ! -e dist/migration/question-bank-export.json
+          ! grep -q '"correctAnswer"' dist/public-question-bank.js
+          ! grep -q '"acceptedAnswers"' dist/public-question-bank.js
+          echo PRODUCTION_V62_SECURITY_OK
