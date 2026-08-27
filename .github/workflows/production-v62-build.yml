@@ -1,4 +1,4 @@
-name: Production V62 build
+name: Production V63 build
 on:
   push:
     branches: [main]
@@ -6,6 +6,7 @@ on:
       - 'tools/build-production-v62.mjs'
       - 'secure-v62.html'
       - 'public-question-bank.js'
+      - 'ui-speed-v63.js'
       - 'secure-runtime-v62.js'
       - 'lifelines-once-v62.js'
       - 'multiplayer-v56.js'
@@ -24,15 +25,20 @@ jobs:
         with:
           node-version: '22'
       - run: node tools/build-production-v62.mjs
-      - name: Verify private bank is not deployable
+      - name: Verify secure and responsive production build
         run: |
           test -f dist/index.html
           test -f dist/controller.html
           test -f dist/public-question-bank.js
           test -f dist/lifelines-once-v62.js
+          test -f dist/ui-speed-v63.js
           test ! -e dist/questions.js
           test ! -e dist/migration/question-bank-export.json
           ! grep -q '"correctAnswer"' dist/public-question-bank.js
           ! grep -q '"acceptedAnswers"' dist/public-question-bank.js
+          grep -q 'content="63"' dist/index.html
+          grep -q 'ui-speed-v63.js?v=63' dist/index.html
+          grep -q 'ui-speed-v63.js?v=63' dist/controller.html
+          grep -q 'pollTimer=setInterval(refreshGameState,3500)' dist/controller.html
           grep -q 'lifelines-once-v62.js' dist/index.html
-          echo PRODUCTION_V62_SECURITY_OK
+          echo PRODUCTION_V63_SECURITY_AND_SPEED_OK
