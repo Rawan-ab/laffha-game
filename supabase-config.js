@@ -35,4 +35,13 @@
   }
 
   window.LaffhaRealtime = { client, ensureSession, readableError, projectUrl: SUPABASE_URL };
+
+  // The controller is a standalone page, so load its small V60 visual-prompt helper here.
+  if (/controller\.html$/i.test(location.pathname) && !document.querySelector('script[data-laffha-controller-v60]')) {
+    const s=document.createElement('script');
+    s.src='controller-prompt-v60.js?v=60';
+    s.dataset.laffhaControllerV60='1';
+    s.defer=true;
+    document.head.appendChild(s);
+  }
 })();
