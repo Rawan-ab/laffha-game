@@ -69,15 +69,39 @@ setup=function(){
       <div class="side-divider"></div>
       <h3>المساعدات</h3>
       <div style="font-size:12px;color:#8b8193;line-height:1.7;margin:-5px 0 10px">كل مساعدة متاحة <b>مرة واحدة لكل فريق</b> في اللعبة.</div>
+      <button class="game-help-open" id="gameHelpOpen" type="button">📖 طريقة اللعب والمساعدات</button>
       <div class="assist-side-item"><span class="assist-icon">🔄</span><div><b>غير السؤال</b><small>يبدّل السؤال بسؤال آخر من نفس الفئة والمستوى</small></div></div>
       <div class="assist-side-item assist-choice"><span class="assist-icon">🧩</span><div><b>خيارات</b><small>تحوّل السؤال إلى اختيارات وتخفض قيمته للنصف: 200→100، 400→200، 600→300</small></div></div>
       <div class="assist-side-item"><span class="assist-icon">💡</span><div><b>تلميح</b><small>يعطيكم معلومة تساعد على الوصول للإجابة</small></div></div>
       <div class="assist-side-item"><span class="assist-icon">⏱️</span><div><b>+15 ثانية</b><small>تضيف 15 ثانية لوقت السؤال الحالي</small></div></div>
     </aside>
+    <dialog class="game-help-dialog" id="gameHelpDialog">
+      <div class="game-help-head"><div><small>تعليمات سريعة</small><h2>كيف تلعبون «لفّها»؟</h2></div><button type="button" id="gameHelpClose" aria-label="إغلاق">×</button></div>
+      <div class="game-help-steps">
+        <div><b>1</b><span><strong>اربطوا الفرق</strong><small>كل فريق يفتح رابط الجوال ويختار اسمه، واللابتوب يبقى شاشة العرض.</small></span></div>
+        <div><b>2</b><span><strong>لفّوا الفئة</strong><small>الفئة تُختار عشوائيًا، ثم يختار الفريق سؤال 200 أو 400 أو 600 نقطة.</small></span></div>
+        <div><b>3</b><span><strong>جاوبوا خلال 60 ثانية</strong><small>الإجابة الخطأ أو انتهاء الوقت تساوي صفر، والسؤال لا ينتقل للفريق الثاني.</small></span></div>
+      </div>
+      <h3>المساعدات — مرة واحدة لكل فريق</h3>
+      <div class="game-help-assists">
+        <div><span>🔄</span><p><b>غير السؤال</b><small>سؤال جديد من نفس الفئة ونفس المستوى.</small></p></div>
+        <div><span>🧩</span><p><b>خيارات</b><small>تحوّل السؤال إلى اختيارات وتصبح قيمته نصف النقاط.</small></p></div>
+        <div><span>💡</span><p><b>تلميح</b><small>يعرض معلومة تساعدكم على الوصول للإجابة.</small></p></div>
+        <div><span>⏱️</span><p><b>+15 ثانية</b><small>تضيف 15 ثانية إلى وقت السؤال الحالي.</small></p></div>
+      </div>
+      <div class="game-help-note">المساعدة تخص الفريق الذي استخدمها فقط، وتبقى باقي مساعداته متاحة حتى يستخدمها.</div>
+    </dialog>
   </div>`);
 
   const setupTopbar=document.querySelector('.topbar');
   if(setupTopbar) setupTopbar.remove();
+
+  const helpDialog=document.getElementById('gameHelpDialog');
+  const helpOpen=document.getElementById('gameHelpOpen');
+  const helpClose=document.getElementById('gameHelpClose');
+  if(helpOpen&&helpDialog)helpOpen.onclick=()=>helpDialog.showModal();
+  if(helpClose&&helpDialog)helpClose.onclick=()=>helpDialog.close();
+  if(helpDialog)helpDialog.onclick=e=>{if(e.target===helpDialog)helpDialog.close();};
 
   const namesBox=document.getElementById('playerNames');
   if(namesBox) namesBox.oninput=()=>{state.playerNamesText=namesBox.value;state.playerDistributionSource=null;};
