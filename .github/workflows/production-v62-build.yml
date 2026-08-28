@@ -1,10 +1,11 @@
-name: Production V64 build
+name: Production V65 build
 on:
   push:
     branches: [main]
     paths:
       - 'tools/build-production-v62.mjs'
       - 'secure-v62.html'
+      - 'multiplayer-fast-v65.js'
       - 'public-question-bank.js'
       - 'ui-speed-v63.js'
       - 'secure-runtime-v62.js'
@@ -27,22 +28,19 @@ jobs:
         with:
           node-version: '22'
       - run: node tools/build-production-v62.mjs
-      - name: Verify secure V64 production build
+      - name: Verify secure V65 fast multiplayer build
         run: |
           test -f dist/index.html
           test -f dist/controller.html
           test -f dist/public-question-bank.js
-          test -f dist/lifelines-once-v62.js
-          test -f dist/ui-speed-v63.js
+          test -f dist/multiplayer-fast-v65.js
           test ! -e dist/questions.js
           test ! -e dist/migration/question-bank-export.json
           ! grep -q '"correctAnswer"' dist/public-question-bank.js
           ! grep -q '"acceptedAnswers"' dist/public-question-bank.js
-          grep -q 'content="64"' dist/index.html
-          grep -q 'lifelines-once-v62.js?v=64' dist/index.html
-          grep -q 'ui-speed-v63.js?v=64' dist/controller.html
-          grep -q 'pollTimer=setInterval(refreshGameState,3500)' dist/controller.html
-          grep -q 'Array.isArray(x.options)&&x.options.length' dist/controller.html
+          grep -q 'content="65"' dist/index.html
+          grep -q 'multiplayer-fast-v65.js?v=65' dist/index.html
+          grep -q 'pollTimer=setInterval(refreshGameState,1000)' dist/controller.html
+          grep -q 'جاري الانتقال للفريق التالي' dist/controller.html
           grep -q 'Math.floor(before/2)' dist/lifelines-once-v62.js
-          grep -q '🧩 خيارات' dist/lifelines-once-v62.js
-          echo PRODUCTION_V64_LIFELINES_OK
+          echo PRODUCTION_V65_FAST_MULTIPLAYER_OK
