@@ -43,22 +43,24 @@ for(const file of publicFiles){
 
 let html=fs.readFileSync(path.join(root,'secure-v62.html'),'utf8');
 html=html
-  .replace('<title>لفّها — Secure V63</title>','<title>لفّها</title>')
-  .replace('content="63-secure"','content="63"');
+  .replace('<title>لفّها — Secure V64</title>','<title>لفّها</title>')
+  .replace('content="64-secure"','content="64"');
 fs.writeFileSync(path.join(out,'index.html'),html);
 fs.writeFileSync(path.join(out,'play-v12.html'),html);
 
-// Controller: keep Realtime instant, but make the fallback polling less aggressive.
-// The V63 UI helper also gives selected choices a strong visual state immediately.
+// Controller: Realtime is primary, fallback polling is intentionally relaxed.
+// If a visual question is converted to Choices, the phone should show the choices
+// instead of forcing the typed-answer UI.
 const controllerPath=path.join(out,'controller.html');
 let controller=fs.readFileSync(controllerPath,'utf8');
 controller=controller
-  .replace('supabase-config.js?v=58','supabase-config.js?v=63')
+  .replace('supabase-config.js?v=58','supabase-config.js?v=64')
   .replace('pollTimer=setInterval(refreshGameState,1500)','pollTimer=setInterval(refreshGameState,3500)')
-  .replace('</body></html>','<script src="ui-speed-v63.js?v=63"></script></body></html>');
+  .replace("const isGuess=x.questionType==='logo'||x.category==='خمن الصورة';if(isGuess){","const isGuess=(x.questionType==='logo'||x.category==='خمن الصورة')&&!(Array.isArray(x.options)&&x.options.length);if(isGuess){")
+  .replace('</body></html>','<script src="ui-speed-v63.js?v=64"></script></body></html>');
 fs.writeFileSync(controllerPath,controller);
 
-// Reduce background work while keeping the UI responsive. Realtime remains the primary sync path.
+// Reduce background work while keeping the UI responsive. Realtime remains primary.
 const runtimePath=path.join(out,'secure-runtime-v62.js');
 let runtime=fs.readFileSync(runtimePath,'utf8');
 runtime=runtime.replace('state.timerId=setInterval(tick,200)','state.timerId=setInterval(tick,500)');
@@ -70,11 +72,6 @@ sync=sync
   .replace("observer.observe(document.documentElement,{subtree:true,childList:true,attributes:true,characterData:true});","observer.observe(document.documentElement,{subtree:true,childList:true});")
   .replace('setInterval(()=>reconcile(true),1500);','setInterval(()=>reconcile(true),3000);');
 fs.writeFileSync(syncPath,sync);
-
-const lifePath=path.join(out,'lifelines-once-v62.js');
-let life=fs.readFileSync(lifePath,'utf8');
-life=life.replace('  setInterval(hideUsedLifelines,500);\n','');
-fs.writeFileSync(lifePath,life);
 
 const bank=fs.readFileSync(path.join(out,'public-question-bank.js'),'utf8');
 for(const token of ['"correctAnswer"','"acceptedAnswers"','"aliases"','"wrongAnswers"']){
@@ -90,10 +87,15 @@ for(const file of forbiddenFiles){
   if(fs.existsSync(path.join(out,file)))throw new Error(`Private source leaked into production: ${file}`);
 }
 
-if(!controller.includes('ui-speed-v63.js?v=63'))throw new Error('V63 controller UI helper missing');
-if(!controller.includes('pollTimer=setInterval(refreshGameState,3500)'))throw new Error('V63 controller polling optimization missing');
-if(!html.includes('content="63"'))throw new Error('V63 version marker missing');
+if(!controller.includes('ui-speed-v63.js?v=64'))throw new Error('V64 controller UI helper missing');
+if(!controller.includes('pollTimer=setInterval(refreshGameState,3500)'))throw new Error('V64 controller polling optimization missing');
+if(!controller.includes('Array.isArray(x.options)&&x.options.length'))throw new Error('V64 visual choices controller support missing');
+if(!html.includes('content="64"'))throw new Error('V64 version marker missing');
+
+const life=fs.readFileSync(path.join(out,'lifelines-once-v62.js'),'utf8');
+if(!life.includes("data-life-secure='choices'")&&!life.includes("dataset.lifeSecure='choices'"))throw new Error('V64 Choices lifeline missing');
+if(!life.includes('Math.floor(before/2)'))throw new Error('V64 half-value rule missing');
 
 const files=fs.readdirSync(out).sort();
-console.log(`LAFFHA_V63_PRODUCTION_BUILD_OK ${files.length} public files`);
+console.log(`LAFFHA_V64_PRODUCTION_BUILD_OK ${files.length} public files`);
 console.log(files.join('\n'));
