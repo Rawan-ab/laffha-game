@@ -12,14 +12,32 @@
     auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false },
   });
 
-  async function ensureSession() {
+  // Multiple parts of the app can ask for a session at the same moment (host/controller/prewarm).
+  // Keep one in-flight promise so we never create two anonymous users and then insert with a stale user id.
+  let sessionInFlight = null;
+
+  async function resolveSession() {
     const { data: current, error: sessionError } = await client.auth.getSession();
     if (sessionError) throw sessionError;
     if (current?.session?.user) return current.session.user;
+
     const { data, error } = await client.auth.signInAnonymously();
     if (error) throw error;
     if (!data?.user) throw new Error('تعذر إنشاء جلسة مؤقتة.');
-    return data.user;
+
+    // Read the final stored session after sign-in so callers always receive the user
+    // that matches the Authorization token currently used by the Supabase client.
+    const { data: confirmed, error: confirmError } = await client.auth.getSession();
+    if (confirmError) throw confirmError;
+    return confirmed?.session?.user || data.user;
+  }
+
+  function ensureSession() {
+    if (sessionInFlight) return sessionInFlight;
+    sessionInFlight = resolveSession().finally(() => {
+      sessionInFlight = null;
+    });
+    return sessionInFlight;
   }
 
   function readableError(error) {
@@ -27,6 +45,9 @@
     const lower = message.toLowerCase();
     if (lower.includes('anonymous') && (lower.includes('disabled') || lower.includes('not enabled'))) {
       return 'لازم تفعيل Anonymous Sign-Ins في Supabase.';
+    }
+    if (lower.includes('row-level security') || lower.includes('42501') || lower.includes('403')) {
+      return 'تعذر ربط الفريق بالجلسة. حدّث الصفحة وحاول مرة ثانية.';
     }
     if (lower.includes('failed to fetch') || lower.includes('network')) {
       return 'تعذر الاتصال بالسيرفر. تأكدوا من الإنترنت وحاولوا مرة ثانية.';
