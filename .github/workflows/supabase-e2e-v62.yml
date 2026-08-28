@@ -1,10 +1,11 @@
-name: Supabase V63 E2E
+name: Supabase V64 E2E
 on:
   push:
     branches: [main]
     paths:
       - '.github/workflows/supabase-e2e-v62.yml'
       - 'secure-runtime-v62.js'
+      - 'lifelines-once-v62.js'
       - 'public-question-bank.js'
   workflow_dispatch:
 jobs:
@@ -12,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Verify optimized server-side answer checking
+      - name: Verify answer checking and secure Choices mode
         shell: bash
         run: |
           node <<'NODE'
@@ -31,5 +32,8 @@ jobs:
           if(good.correct!==true) throw new Error('Known correct answer was rejected');
           const bad=await post('/functions/v1/laffha-answer',{questionId:'gen27-e-20',answer:'إجابة خاطئة تمامًا',teamNo:1,mode:'answer'},token);
           if(bad.correct!==false) throw new Error('Known wrong answer was accepted');
-          console.log(`SUPABASE_V63_E2E_OK ${Date.now()-started}ms`);
+          const choices=await post('/functions/v1/laffha-answer',{questionId:'tv27-e-01',answer:'',teamNo:1,mode:'choices'},token);
+          if(!Array.isArray(choices.options)||choices.options.length<2||choices.options.length>4) throw new Error(`Choices mode returned invalid options: ${JSON.stringify(choices)}`);
+          if('correct' in choices||'correctAnswer' in choices||'answer' in choices) throw new Error('Choices mode leaked answer metadata');
+          console.log(`SUPABASE_V64_E2E_OK ${Date.now()-started}ms choices=${choices.options.length}`);
           NODE
