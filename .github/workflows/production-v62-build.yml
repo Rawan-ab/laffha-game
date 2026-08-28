@@ -1,4 +1,4 @@
-name: Production V63 build
+name: Production V64 build
 on:
   push:
     branches: [main]
@@ -9,6 +9,8 @@ on:
       - 'ui-speed-v63.js'
       - 'secure-runtime-v62.js'
       - 'lifelines-once-v62.js'
+      - 'setup-design-v15.js'
+      - 'supabase-config.js'
       - 'multiplayer-v56.js'
       - 'multiplayer-sync-v57.js'
       - 'multiplayer-typed-secure-v62.js'
@@ -25,7 +27,7 @@ jobs:
         with:
           node-version: '22'
       - run: node tools/build-production-v62.mjs
-      - name: Verify secure and responsive production build
+      - name: Verify secure V64 production build
         run: |
           test -f dist/index.html
           test -f dist/controller.html
@@ -36,9 +38,11 @@ jobs:
           test ! -e dist/migration/question-bank-export.json
           ! grep -q '"correctAnswer"' dist/public-question-bank.js
           ! grep -q '"acceptedAnswers"' dist/public-question-bank.js
-          grep -q 'content="63"' dist/index.html
-          grep -q 'ui-speed-v63.js?v=63' dist/index.html
-          grep -q 'ui-speed-v63.js?v=63' dist/controller.html
+          grep -q 'content="64"' dist/index.html
+          grep -q 'lifelines-once-v62.js?v=64' dist/index.html
+          grep -q 'ui-speed-v63.js?v=64' dist/controller.html
           grep -q 'pollTimer=setInterval(refreshGameState,3500)' dist/controller.html
-          grep -q 'lifelines-once-v62.js' dist/index.html
-          echo PRODUCTION_V63_SECURITY_AND_SPEED_OK
+          grep -q 'Array.isArray(x.options)&&x.options.length' dist/controller.html
+          grep -q 'Math.floor(before/2)' dist/lifelines-once-v62.js
+          grep -q '🧩 خيارات' dist/lifelines-once-v62.js
+          echo PRODUCTION_V64_LIFELINES_OK
