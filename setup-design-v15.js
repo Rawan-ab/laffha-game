@@ -1,4 +1,4 @@
-// V31 setup: player names + balanced random team distribution.
+// V31/V64 setup: player names + balanced random team distribution + current lifeline rules.
 home=function(){state.screen='setup';setup();};
 
 function laffhaPlayerNames(){
@@ -68,10 +68,11 @@ setup=function(){
       </div>
       <div class="side-divider"></div>
       <h3>المساعدات</h3>
+      <div style="font-size:12px;color:#8b8193;line-height:1.7;margin:-5px 0 10px">كل مساعدة متاحة <b>مرة واحدة لكل فريق</b> في اللعبة.</div>
       <div class="assist-side-item"><span class="assist-icon">🔄</span><div><b>غير السؤال</b><small>يبدّل السؤال بسؤال آخر من نفس الفئة والمستوى</small></div></div>
-      <div class="assist-side-item"><span class="assist-icon">✂️</span><div><b>50/50</b><small>يحذف خيارين خطأ في أسئلة الاختيارات</small></div></div>
+      <div class="assist-side-item assist-choice"><span class="assist-icon">🧩</span><div><b>خيارات</b><small>تحوّل السؤال إلى اختيارات وتخفض قيمته للنصف: 200→100، 400→200، 600→300</small></div></div>
       <div class="assist-side-item"><span class="assist-icon">💡</span><div><b>تلميح</b><small>يعطيكم معلومة تساعد على الوصول للإجابة</small></div></div>
-      <div class="assist-side-item assist-choice"><span class="assist-icon">➕</span><div><b>إضافة خيارات</b><small>تحوّل السؤال المفتوح إلى 4 خيارات، وتصبح قيمته 50 نقطة</small></div></div>
+      <div class="assist-side-item"><span class="assist-icon">⏱️</span><div><b>+15 ثانية</b><small>تضيف 15 ثانية لوقت السؤال الحالي</small></div></div>
     </aside>
   </div>`);
 
@@ -88,7 +89,7 @@ setup=function(){
     if(laffhaPlayerNames().length)laffhaDistributePlayers();
     render();
   });
-  document.querySelectorAll('[data-rounds]').forEach(b=>b.onclick=()=>{state.rounds=+b.dataset.rounds;render();});
+  document.querySelectorAll('[data-rounds]').forEach(b=>b.onclick=()=>{state.rounds=+b.dataset.rounds;render()});
   document.querySelectorAll('[data-team]').forEach(inp=>inp.oninput=()=>state.teams[+inp.dataset.team].name=inp.value||`الفريق ${+inp.dataset.team+1}`);
 
   const shuffleBtn=document.getElementById('shufflePlayers');
@@ -103,7 +104,7 @@ setup=function(){
     state.playerNamesText=namesBox?.value||state.playerNamesText||'';
     if(laffhaPlayerNames().length&&!laffhaDistributionFresh())laffhaDistributePlayers();
     state.currentTeam=0;state.currentRound=1;state.usedQuestions=new Set();
-    state.teams.forEach(t=>{t.score=0;t.lifelines={hint:true,fifty:true,time:true,change:true}});
+    state.teams.forEach(t=>{t.score=0;t.lifelines={hint:true,choices:true,time:true,change:true}});
     if(typeof buildFairPointSchedules==='function')buildFairPointSchedules();
     state.screen='spin';render();
   };
