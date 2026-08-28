@@ -1,0 +1,40 @@
+/* V69 — approved setup screen. Match the supplied reference only; no extra sections. */
+:root{--approved-bg:#fffaf4;--approved-ink:#242033;--approved-muted:#817b89;--approved-line:#ece4df;--approved-purple:#5f35a7;--approved-gold:#d7b85c}
+body{background:var(--approved-bg)!important}
+.setup-page-v16{width:min(1380px,calc(100vw - 28px))!important;min-height:calc(100vh - 14px)!important;margin:7px auto!important;display:grid!important;grid-template-columns:minmax(0,846px) 270px!important;justify-content:space-between!important;gap:24px!important;align-items:stretch!important;direction:ltr!important}
+.setup-reference,.setup-side-v16{direction:rtl!important;height:100%!important}
+.setup-reference{padding:18px 28px 18px!important;border-radius:26px!important;background:#fff!important;border:1px solid var(--approved-line)!important;box-shadow:0 18px 55px rgba(64,43,36,.07)!important;overflow:hidden!important}
+.setup-side-v16{padding:17px 13px!important;border-radius:25px!important;background:#fff!important;border:1px solid var(--approved-line)!important;box-shadow:0 18px 55px rgba(64,43,36,.07)!important;gap:8px!important}
+.setup-corner-brand{top:10px!important;right:18px!important;font-size:22px!important}
+.setup-intro-line{font-size:13px!important;margin:0 0 8px!important;padding-top:0!important}
+.setup-controls-top{grid-template-columns:1fr 1fr 1fr!important;gap:22px!important;margin:0 20px 13px!important;align-items:end!important}
+.setup-field-reference .section-title{font-size:13px!important;margin:0 0 6px!important}
+.setup-choice-row{gap:7px!important}
+.setup-choice-row .choice{min-width:40px!important;height:34px!important;padding:0 9px!important;border-radius:11px!important;font-size:12px!important}
+.rounds-row .choice{min-width:48px!important}
+.timer-display{height:34px!important;border-radius:11px!important;font-size:12px!important;padding:0 10px!important}
+.categories-field{margin:0 0 12px!important}
+.setup-categories{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:10px 12px!important}
+.setup-categories .cat-chip{min-height:88px!important;border-radius:17px!important;padding:8px!important;gap:4px!important}
+.setup-categories .cat-chip .emoji{font-size:27px!important}
+.setup-categories .cat-chip strong{font-size:13px!important}
+.cat-blue{background:linear-gradient(135deg,#dcecf9,#cfdff4)!important}.cat-coral{background:linear-gradient(135deg,#f6d6cd,#efc1b7)!important}.cat-yellow{background:linear-gradient(135deg,#fff0b8,#ffe49b)!important}.cat-purple{background:linear-gradient(135deg,#efe2f6,#e3d6f0)!important}.cat-violet{background:linear-gradient(135deg,#eadffc,#dccdf3)!important}.cat-green{background:linear-gradient(135deg,#e7f0dc,#d5e6c8)!important}.cat-lilac{background:linear-gradient(135deg,#e1e4fb,#d0d6f4)!important}.cat-pink{background:linear-gradient(135deg,#f7d7e5,#edc4d8)!important}
+.player-builder{max-width:none!important;margin:2px 0 12px!important;padding:11px 13px!important;border-radius:16px!important;background:#fffaf7!important}
+.player-builder-head{margin-bottom:7px!important}
+.player-builder-head h3{font-size:14px!important;margin-bottom:2px!important}.player-builder-head p{font-size:9px!important}.player-count{font-size:9px!important;padding:5px 8px!important}
+.player-builder-row{grid-template-columns:minmax(0,1fr) 180px!important;gap:8px!important}
+.player-builder textarea{min-height:62px!important;border-radius:12px!important;padding:9px 11px!important;font-size:11px!important}
+.shuffle-players-btn{border-radius:12px!important;font-size:11px!important;padding:10px 12px!important;background:linear-gradient(135deg,#7650bc,#4d347b)!important}
+.teams-field{max-width:none!important;margin:0 0 11px!important}
+.team-roster-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+.team-roster-card{border-radius:14px!important;padding:7px 9px 8px!important}.team-roster-card .team-input{height:34px!important}.team-roster-card .team-input input{font-size:12px!important}.team-members{min-height:22px!important;padding:2px 4px 0!important}.team-members small,.team-members span{font-size:9px!important}
+.play-mode-switch{margin:0 0 8px!important;padding:9px 11px!important;border-radius:16px!important;background:#fffaf7!important}
+.play-mode-switch h3{font-size:13px!important;margin:0 0 7px!important}.play-mode-options{gap:8px!important}.play-mode-btn{border-radius:13px!important;padding:9px 10px!important;font-size:11px!important}.play-mode-btn small{font-size:9px!important;margin-top:2px!important}
+.play-mode-btn.active{background:linear-gradient(135deg,#6d40bd,#4a2f78)!important;border-color:#6740a8!important}
+.setup-start-reference{min-width:235px!important;margin:6px auto 0!important;border-radius:15px!important;padding:10px 24px!important;font-size:17px!important;background:linear-gradient(135deg,#7444c9,#432c68)!important;border:2px solid var(--approved-gold)!important}
+.setup-bottom-facts{gap:12px!important;margin-top:8px!important}.setup-bottom-facts span{min-width:185px!important;border-radius:12px!important;padding:7px 11px!important;font-size:9px!important}
+.setup-score-preview{padding-bottom:2px!important}.setup-score-preview>small{font-size:10px!important}.setup-score-preview>strong{font-size:24px!important;margin-bottom:3px!important}.setup-score-preview>span{font-size:9px!important;padding:4px 8px!important}.preview-score-list{gap:6px!important;margin-top:10px!important}.preview-team{border-radius:12px!important;padding:8px 9px!important}.preview-team>div{font-size:11px!important}.preview-team b{font-size:12px!important}.preview-current-members,.preview-team-info small{font-size:8px!important}
+.side-divider{margin:5px 0 1px!important}.setup-side-v16 h3{font-size:16px!important;margin:0 4px 3px!important}.setup-side-v16 h3+div{font-size:9px!important;line-height:1.55!important;margin:-2px 0 7px!important}
+.assist-side-item{grid-template-columns:36px minmax(0,1fr)!important;gap:8px!important;border-radius:14px!important;padding:9px 10px!important;min-height:66px!important}.assist-side-item .assist-icon{font-size:22px!important}.assist-side-item b{font-size:12px!important}.assist-side-item small{font-size:8px!important;line-height:1.5!important}.assist-choice{border-color:#d6c2ed!important;background:#fcf9ff!important}
+@media(max-width:1180px) and (min-width:901px){.setup-page-v16{width:calc(100vw - 18px)!important;grid-template-columns:minmax(0,1fr) 250px!important;gap:14px!important}.setup-reference{padding-left:20px!important;padding-right:20px!important}.setup-controls-top{margin-left:0!important;margin-right:0!important;gap:14px!important}.player-builder-row{grid-template-columns:minmax(0,1fr) 160px!important}.setup-bottom-facts span{min-width:150px!important}}
+@media(max-width:900px){.setup-page-v16{width:calc(100% - 12px)!important;grid-template-columns:1fr!important;gap:10px!important}.setup-reference,.setup-side-v16{grid-column:1!important}.setup-reference{padding:42px 12px 15px!important}.setup-controls-top{grid-template-columns:1fr!important;margin:0 0 12px!important;gap:10px!important}.setup-categories{grid-template-columns:repeat(2,minmax(0,1fr))!important}.player-builder-row{grid-template-columns:1fr!important}.team-roster-grid{grid-template-columns:1fr!important}.play-mode-options{grid-template-columns:1fr!important}.setup-bottom-facts{flex-direction:column!important}.setup-bottom-facts span{min-width:0!important}.setup-side-v16{display:grid!important;grid-template-columns:1fr 1fr!important}.setup-score-preview,.side-divider,.setup-side-v16 h3,.setup-side-v16 h3+div{grid-column:1/-1!important}}
