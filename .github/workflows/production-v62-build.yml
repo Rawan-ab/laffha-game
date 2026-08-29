@@ -1,4 +1,4 @@
-name: Production V73 build
+name: Production V74 build
 on:
   push:
     branches: [main]
@@ -9,6 +9,7 @@ on:
       - 'approved-setup-v69.js'
       - 'setup-reference-v71.js'
       - 'category-hold-v73.js'
+      - 'countries-category-v74.js'
       - 'multiplayer-fast-v66.js'
       - 'public-question-bank.js'
       - 'ui-speed-v63.js'
@@ -32,7 +33,7 @@ jobs:
         with:
           node-version: '22'
       - run: node tools/build-production-v62.mjs
-      - name: Verify V73 held category + V66 multiplayer
+      - name: Verify V74 held category + V66 multiplayer
         run: |
           test -f dist/index.html
           test -f dist/controller.html
@@ -41,19 +42,24 @@ jobs:
           test -f dist/approved-setup-v69.css
           test -f dist/approved-setup-v69.js
           test -f dist/category-hold-v73.js
+          test -f dist/countries-category-v74.js
           test ! -e dist/questions.js
           test ! -e dist/migration/question-bank-export.json
           ! grep -q '"correctAnswer"' dist/public-question-bank.js
           ! grep -q '"acceptedAnswers"' dist/public-question-bank.js
-          grep -q 'content="73"' dist/index.html
-          grep -q 'approved-setup-v69.css?v=73' dist/index.html
-          grep -q 'approved-setup-v69.js?v=73' dist/index.html
-          grep -q 'multiplayer-fast-v66.js?v=73' dist/index.html
-          grep -q 'category-hold-v73.js?v=73' dist/index.html
+          ! grep -q '"correctAnswer"' dist/countries-category-v74.js
+          grep -q "name:'دول العالم'" dist/countries-category-v74.js
+          grep -q "questionCount:incoming.length" dist/countries-category-v74.js
+          grep -q 'content="74"' dist/index.html
+          grep -q 'approved-setup-v69.css?v=74' dist/index.html
+          grep -q 'approved-setup-v69.js?v=74' dist/index.html
+          grep -q 'multiplayer-fast-v66.js?v=74' dist/index.html
+          grep -q 'category-hold-v73.js?v=74' dist/index.html
+          grep -q 'countries-category-v74.js?v=74' dist/index.html
           grep -Fq "filter(([k])=>k!=='logos')" dist/setup-reference-v71.js
           grep -Fq "filter(key=>key!==HELD_CATEGORY)" dist/category-hold-v73.js
           grep -q 'laffha-fast-v66-' dist/controller.html
           grep -q 'pollTimer=setInterval(refreshGameState,5000)' dist/controller.html
           grep -q "event:'action'" dist/multiplayer-fast-v66.js
           grep -q "event:'state'" dist/controller.html
-          echo PRODUCTION_V73_HELD_CATEGORY_OK
+          echo PRODUCTION_V74_HELD_CATEGORY_OK
