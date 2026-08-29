@@ -14,6 +14,7 @@ const context={
   setTimeout,
   clearTimeout
 };
+context.window=context;
 vm.createContext(context);
 vm.runInContext(source,context);
 
