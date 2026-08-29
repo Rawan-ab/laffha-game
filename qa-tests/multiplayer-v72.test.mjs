@@ -8,7 +8,7 @@ const fast=fs.readFileSync('multiplayer-fast-v66.js','utf8');
 const host=fs.readFileSync('multiplayer-v56.js','utf8');
 const sync=fs.readFileSync('multiplayer-sync-v57.js','utf8');
 
-const core=s=>[Number(s.revision||0),s.phase||'',Number(s.current_team||0),s.question_id||s.question_payload?.questionText||''].join('|');
+const core=s=>!s?'':[Number(s.revision||0),s.phase||'',Number(s.current_team||0),s.question_id||s.question_payload?.questionText||''].join('|');
 const identity=s=>[core(s),JSON.stringify(s.question_payload?.lifelines||{}),JSON.stringify(s.question_payload?.options||[]),s.question_payload?.activeHint||''].join('|');
 
 test('team-scoped result identity is emitted and consumed',()=>{
