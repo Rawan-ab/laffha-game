@@ -1,4 +1,4 @@
-name: Production V69 build
+name: Production V73 build
 on:
   push:
     branches: [main]
@@ -6,7 +6,7 @@ on:
       - 'tools/build-production-v62.mjs'
       - 'secure-v62.html'
       - 'approved-setup-v69.css'
-      - 'approved-setup-v69.js'
+      - 'approved-setup-v69.js'\n      - 'setup-reference-v71.js'\n      - 'category-hold-v73.js'
       - 'multiplayer-fast-v66.js'
       - 'public-question-bank.js'
       - 'ui-speed-v63.js'
@@ -30,24 +30,24 @@ jobs:
         with:
           node-version: '22'
       - run: node tools/build-production-v62.mjs
-      - name: Verify approved V69 setup + V66 multiplayer
+      - name: Verify approved V73 setup + V66 multiplayer
         run: |
           test -f dist/index.html
           test -f dist/controller.html
           test -f dist/public-question-bank.js
           test -f dist/multiplayer-fast-v66.js
           test -f dist/approved-setup-v69.css
-          test -f dist/approved-setup-v69.js
+          test -f dist/approved-setup-v69.js\n          test -f dist/category-hold-v73.js
           test ! -e dist/questions.js
           test ! -e dist/migration/question-bank-export.json
           ! grep -q '"correctAnswer"' dist/public-question-bank.js
           ! grep -q '"acceptedAnswers"' dist/public-question-bank.js
-          grep -q 'content="69"' dist/index.html
-          grep -q 'approved-setup-v69.css?v=69' dist/index.html
-          grep -q 'approved-setup-v69.js?v=69' dist/index.html
-          grep -q 'multiplayer-fast-v66.js?v=69' dist/index.html
+          grep -q 'content="73"' dist/index.html
+          grep -q 'approved-setup-v69.css?v=73' dist/index.html
+          grep -q 'approved-setup-v69.js?v=73' dist/index.html
+          grep -q 'multiplayer-fast-v66.js?v=73' dist/index.html\n          grep -q 'category-hold-v73.js?v=73' dist/index.html\n          grep -q \"filter(([k])=>k!=='logos')\" dist/setup-reference-v71.js\n          grep -q \"filter(key=>key!==HELD_CATEGORY)\" dist/category-hold-v73.js
           grep -q 'laffha-fast-v66-' dist/controller.html
           grep -q 'pollTimer=setInterval(refreshGameState,5000)' dist/controller.html
           grep -q "event:'action'" dist/multiplayer-fast-v66.js
           grep -q "event:'state'" dist/controller.html
-          echo PRODUCTION_V69_APPROVED_SETUP_OK
+          echo PRODUCTION_V73_APPROVED_SETUP_OK
