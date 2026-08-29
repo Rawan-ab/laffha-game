@@ -31,9 +31,12 @@
     if(ph==='start_question')return {...base,category:CATS[state.selectedCategory]?.name||'',categoryEmoji:CATS[state.selectedCategory]?.emoji||'',points:state.drawnPoints||q.points||0,difficulty:state.drawnDifficulty||''};
     if(ph==='question'){
       const options=answerButtons().filter(b=>!b.classList.contains('hidden-answer')).map(answerValue).filter(Boolean);
-      return {...base,questionText:q.questionText||'',questionType:q.questionType||'',category:CATS[q.category]?.name||'',points:Number(state.currentAwardPoints??q.points??0),options};
+      const life=state.teams[state.currentTeam]?.lifelines||{};
+      const lifelines={hint:life.hint!==false,time:life.time!==false,change:life.change!==false,choices:q.questionType!=='mcq'&&life.choices!==false};
+      const activeHint=document.getElementById('hintBox')?.innerText?.replace(/^💡\s*تلميح\s*/,'').trim()||'';
+      return {...base,questionText:q.questionText||'',questionType:q.questionType||'',category:CATS[q.category]?.name||'',points:Number(state.currentAwardPoints??q.points??0),options,lifelines,activeHint};
     }
-    if(ph==='result')return {...base,status:state.lastResult,points:Number(state.currentAwardPoints??q.points??0)};
+    if(ph==='result')return {...base,status:state.lastResult,answeredByTeam:base.teamNo,points:Number(state.currentAwardPoints??q.points??0)};
     if(ph==='finished')return {...base,ranking:[...state.teams].sort((a,b)=>b.score-a.score).map(t=>({name:t.name,score:t.score}))};
     return base;
   }
