@@ -237,6 +237,13 @@
     if(type==='start_question'&&state.screen==='spin'){
       const btn=document.getElementById('spinBtn');if(btn&&(btn.classList.contains('points-ready')||/ابدأ السؤال/.test(btn.textContent||'')))btn.click();return;
     }
+    if(type==='lifeline'&&state.screen==='question'){
+      const lifeType=String(payload.type||'');
+      if(!['hint','time','change','choices'].includes(lifeType))return;
+      const btn=document.querySelector(`[data-life-secure="${lifeType}"]`);
+      if(btn&&!btn.disabled){btn.click();}
+      return;
+    }
     if(type==='answer'&&state.screen==='question'){
       if(payload.typed===true)return; // V62 typed handler verifies it server-side.
       const wanted=String(payload.answer??'');
