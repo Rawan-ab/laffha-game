@@ -1,4 +1,4 @@
-// V63 — clearer selected-answer state + lightweight client warmup.
+// V72 — clearer selected-answer state + lightweight client warmup.
 (function(){
   const style=document.createElement('style');
   style.textContent=`
@@ -35,7 +35,13 @@
 
   // Pre-create the anonymous session while players are on setup/home so the first
   // server-verified answer does not also pay the authentication startup cost.
-  try{window.LaffhaRealtime?.ensureSession?.().catch(()=>{});}catch(_){ }
+  try{
+    const rt=window.LaffhaRealtime;
+    rt?.ensureSession?.().then(()=>{
+      const q=(typeof QUESTIONS!=='undefined'&&QUESTIONS[0])||null;
+      if(q?.questionID)return rt.client.functions.invoke('laffha-answer',{body:{questionId:q.questionID,answer:'',teamNo:0,roomId:null,revision:null,mode:'answer'}}).catch(()=>{});
+    }).catch(()=>{});
+  }catch(_){ }
 
-  console.info('Laffha V63 answer feedback + speed warmup ready');
+  console.info('Laffha V72 answer feedback + speed warmup ready');
 })();
