@@ -25,6 +25,8 @@ function laffhaDistributionFresh(){
 }
 
 setup=function(){
+  // V73 hold: keep خمن الصورة code/questions, but exclude it from setup and random play.
+  state.categories=(Array.isArray(state.categories)?state.categories:Object.keys(CATS)).filter(k=>k!=='logos');
   if(!state.teams.length)resetTeams();
   state.playerNamesText=state.playerNamesText||'';
   state.teams.forEach(t=>{if(!Array.isArray(t.members))t.members=[];});
