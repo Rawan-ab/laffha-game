@@ -42,7 +42,7 @@ setup=function(){
         <div class="field setup-field-reference timer-field"><h3 class="section-title">مدة السؤال</h3><div class="timer-display"><span>⏱️</span><b>60 ثانية</b><span class="timer-chevron">⌄</span></div></div>
       </div>
 
-      <div class="field setup-field-reference categories-field"><h3 class="section-title centered-title">الفئات المشاركة</h3><div class="categories readonly setup-categories">${Object.entries(CATS).map(([k,c])=>`<div class="cat-chip ${classByKey[k]||'cat-lilac'}"><span class="emoji">${c.emoji}</span><strong>${c.name}</strong></div>`).join('')}</div></div>
+      <div class="field setup-field-reference categories-field"><h3 class="section-title centered-title">الفئات المشاركة</h3><div class="categories readonly setup-categories">${Object.entries(CATS).filter(([k])=>k!=='logos').map(([k,c])=>`<div class="cat-chip ${classByKey[k]||'cat-lilac'}"><span class="emoji">${c.emoji}</span><strong>${c.name}</strong></div>`).join('')}</div></div>
 
       <div class="player-builder">
         <div class="player-builder-head"><div><h3>أسماء اللاعبين</h3><p>اكتبوا كل اسم في سطر أو افصلوا الأسماء بفاصلة، وبنوزعهم بالتساوي عشوائيًا.</p></div><span class="player-count">${playerCount} لاعب</span></div>
