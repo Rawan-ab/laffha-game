@@ -17,6 +17,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+      - name: Run multiplayer synchronization unit and stress tests
+        run: node --test qa-tests/multiplayer-v72.test.mjs
       - name: Install Playwright
         run: |
           npm install playwright@1.55.0
