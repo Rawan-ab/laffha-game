@@ -8,9 +8,9 @@
   line-height:1;
   font-weight:800;
   letter-spacing:-1px;
-  background:linear-gradient(110deg,#31236f 6%,#6d3e92 52%,#f06f59 98%);
-  -webkit-background-clip:text;
-  color:transparent;
+  background:none;
+  -webkit-background-clip:initial;
+  color:#5f35a7;
   z-index:2;
 }
 .setup-intro-line{
