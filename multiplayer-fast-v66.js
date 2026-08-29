@@ -70,6 +70,13 @@
       const btn=document.getElementById('spinBtn');if(btn&&!btn.disabled)btn.click();
       scheduleBroadcast(20);return;
     }
+    if(type==='lifeline'&&state.screen==='question'){
+      const lifeType=String(p.type||'');
+      if(!['hint','time','change','choices'].includes(lifeType))return;
+      const btn=document.querySelector(`[data-life-secure="${lifeType}"]`);
+      if(btn&&!btn.disabled){btn.click();scheduleBroadcast(80);}
+      return;
+    }
     if(type==='answer'&&state.screen==='question'){
       if(p.typed===true){
         try{const ok=await window.laffhaSecureVerify(String(p.answer??''));if(state.screen==='question')finishQuestion(ok?'correct':'wrong');}
@@ -113,7 +120,7 @@
       const stamp=`${state.multiRoom.id}:${state.currentRound}:${state.currentTeam}:${state.currentQuestion?.questionID||''}:${state.lastResult||''}`;
       if(state._v66AutoNext!==stamp){
         state._v66AutoNext=stamp;
-        setTimeout(()=>{if(isMulti()&&state.screen==='result')document.getElementById('next')?.click();},1050);
+        setTimeout(()=>{if(isMulti()&&state.screen==='result')document.getElementById('next')?.click();},450);
       }
     }
   };
