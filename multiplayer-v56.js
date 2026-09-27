@@ -56,7 +56,6 @@
   setup=function(){
     clearMultiUi();
     oldSetup();
-    injectPlayMode();
     const begin=document.getElementById('begin');
     if(!begin)return;
     const soloBegin=begin.onclick;

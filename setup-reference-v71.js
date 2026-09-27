@@ -27,7 +27,8 @@ function laffhaDistributionFresh(){
 setup=function(){
   // V73 hold: keep خمن الصورة code/questions, but exclude it from setup and random play.
   state.categories=(Array.isArray(state.categories)?state.categories:Object.keys(CATS)).filter(k=>k!=='logos');
-  if(!state.teams.length)resetTeams();
+  state.teamCount=2;
+  if(state.teams.length!==2)resetTeams();
   state.playerNamesText=state.playerNamesText||'';
   state.teams.forEach(t=>{if(!Array.isArray(t.members))t.members=[];});
   const classByKey={tv:'cat-blue',movies:'cat-coral',songs:'cat-yellow',artists:'cat-purple',cartoons:'cat-violet',sports:'cat-green',general:'cat-lilac',logos:'cat-pink'};
@@ -39,7 +40,6 @@ setup=function(){
       <div class="setup-intro-line">اختاروا التحدي، <b>فكروا بسرعة</b>، والعبوا للفوز!</div>
 
       <div class="setup-controls-top">
-        <div class="field setup-field-reference team-count-field"><h3 class="section-title">عدد الفرق</h3><div class="choice-row setup-choice-row">${[2,3,4,5,6].map(n=>`<button class="choice ${state.teamCount===n?'active':''}" data-teamcount="${n}">${n}</button>`).join('')}</div></div>
         <div class="field setup-field-reference rounds-field"><h3 class="section-title">عدد الجولات</h3><div class="choice-row setup-choice-row rounds-row">${[5,7,10,15].map(n=>`<button class="choice ${state.rounds===n?'active':''}" data-rounds="${n}">${n}</button>`).join('')}</div></div>
         <div class="field setup-field-reference timer-field"><h3 class="section-title">مدة السؤال</h3><div class="timer-display"><span>⏱️</span><b>60 ثانية</b><span class="timer-chevron">⌄</span></div></div>
       </div>
@@ -84,13 +84,6 @@ setup=function(){
   const namesBox=document.getElementById('playerNames');
   if(namesBox) namesBox.oninput=()=>{state.playerNamesText=namesBox.value;state.playerDistributionSource=null;};
 
-  document.querySelectorAll('[data-teamcount]').forEach(b=>b.onclick=()=>{
-    state.teamCount=+b.dataset.teamcount;
-    resetTeams();
-    state.teams.forEach(t=>t.members=[]);
-    if(laffhaPlayerNames().length)laffhaDistributePlayers();
-    render();
-  });
   document.querySelectorAll('[data-rounds]').forEach(b=>b.onclick=()=>{state.rounds=+b.dataset.rounds;render()});
   document.querySelectorAll('[data-team]').forEach(inp=>inp.oninput=()=>state.teams[+inp.dataset.team].name=inp.value||`الفريق ${+inp.dataset.team+1}`);
 
