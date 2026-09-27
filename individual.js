@@ -2,15 +2,21 @@
   const root = document.getElementById('solo-app');
   const api = window.LaffhaRealtime;
   const categories = [['tv','📺 مسلسلات'],['movies','🎬 أفلام'],['songs','🎵 أغاني'],['artists','🎤 فنانين'],['cartoons','🧸 كرتون وطفولة'],['sports','⚽ رياضة'],['general','🌍 معلومات عامة'],['countries','🌎 دول العالم']];
-  const avatars = ['😄','😎','😮','😊','😉','😴'];
-  const avatarLabels = {'😄':'متحمس','😎':'رايق','😮':'مندهش','😊':'سعيد','😉':'مرح','😴':'نعسان'};
+  const avatars = ['😄','😆','😊','🥰','😎','😉','😮','😬','😟','😠','😌','😴'];
+  const avatarLabels = {'😄':'سعيد','😆':'متحمس','😊':'مبتسم','🥰':'مبتهج','😎':'رايق','😉':'مرح','😮':'مندهش','😬':'متوتر','😟':'قلقان','😠':'معصّب','😌':'هادي','😴':'نعسان'};
   const avatarFaces = {
-    '😄': ['#FFD56F','<path d="M21 34q5-6 10 0m12 0q5-6 10 0"/><path d="M23 47q15 22 30 0z" fill="#241B38" stroke="#241B38"/>'],
+    '😄': ['#FFD56F','<ellipse cx="27" cy="33" rx="2.8" ry="4" fill="#241B38" stroke="none"/><ellipse cx="49" cy="33" rx="2.8" ry="4" fill="#241B38" stroke="none"/><path d="M23 46q15 23 30 0z" fill="#241B38" stroke="#241B38"/>'],
+    '😆': ['#FFD56F','<path d="M18 35q7-7 14 0m12 0q7-7 14 0"/><path d="M23 48q15 22 30 0z" fill="#241B38" stroke="#241B38"/>'],
     '😎': ['#FFA858','<path d="M15 32h22v9q-11 8-22-1zm24 0h22v8q-11 9-22 1z" fill="#241B38" stroke="#241B38"/><path d="M37 35h3m-13 19q11 9 22 0"/>'],
     '😮': ['#FFB19C','<circle cx="27" cy="34" r="4" fill="#241B38" stroke="none"/><circle cx="49" cy="34" r="4" fill="#241B38" stroke="none"/><ellipse cx="38" cy="53" rx="9" ry="11" fill="#241B38" stroke="none"/>'],
     '😊': ['#FFCD6D','<path d="M21 34q6-8 12 0m10 0q6-8 12 0m-28 16q11 12 22 0"/><circle cx="20" cy="45" r="5" fill="#F28989" opacity=".7" stroke="none"/><circle cx="56" cy="45" r="5" fill="#F28989" opacity=".7" stroke="none"/>'],
+    '🥰': ['#F9B69F','<path d="M20 35q6-7 12 0m12 0q6-7 12 0m-27 18q9 8 18 0"/><circle cx="20" cy="46" r="5" fill="#E981AF" stroke="none"/><circle cx="56" cy="46" r="5" fill="#E981AF" stroke="none"/>'],
     '😉': ['#86C990','<path d="M19 35q7-7 14 0"/><circle cx="49" cy="34" r="3.5" fill="#241B38" stroke="none"/><path d="M27 51q12 13 24 0"/>'],
-    '😴': ['#BFE4D1','<path d="M20 35q7 5 14 0m10 0q7 5 14 0"/><ellipse cx="39" cy="53" rx="6" ry="8" fill="#241B38" stroke="none"/><text x="52" y="20" font-size="14" fill="#694488" stroke="none">Z</text>']
+    '😴': ['#BFE4D1','<path d="M20 35q7 5 14 0m10 0q7 5 14 0"/><ellipse cx="39" cy="53" rx="6" ry="8" fill="#241B38" stroke="none"/><text x="52" y="20" font-size="14" fill="#694488" stroke="none">Z</text>'],
+    '😬': ['#FFD078','<ellipse cx="27" cy="33" rx="2.8" ry="4" fill="#241B38" stroke="none"/><ellipse cx="49" cy="33" rx="2.8" ry="4" fill="#241B38" stroke="none"/><rect x="22" y="47" width="32" height="12" rx="4" fill="#fff"/><path d="M22 53h32m-24-6v12m8-12v12m8-12v12" stroke-width="2"/>'],
+    '😟': ['#BFE4D1','<path d="M19 29q7 4 13-3m12 0q7 7 13 3"/><path d="M23 37q5 4 9 0m12 0q5 4 9 0"/><path d="M28 55q10-12 20 0"/>'],
+    '😠': ['#FFA45B','<path d="M20 26l13 6m23-6l-13 6"/><ellipse cx="27" cy="37" rx="2.8" ry="4" fill="#241B38" stroke="none"/><ellipse cx="49" cy="37" rx="2.8" ry="4" fill="#241B38" stroke="none"/><path d="M26 55q12-11 24 0"/>'],
+    '😌': ['#86C990','<path d="M20 35q7 5 14 0m10 0q7 5 14 0m-30 17q10 10 20 0"/>']
   };
   const avatarArt = value => {
     const face=avatarFaces[value];
