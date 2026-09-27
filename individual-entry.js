@@ -7,7 +7,7 @@
     link.href='individual.html';
     link.className='play-mode-btn';
     link.dataset.individualEntry='1';
-    link.style.cssText='display:flex;flex-direction:column;align-items:center;justify-content:center;text-decoration:none;text-align:center;color:inherit;gap:5px';
+    link.style.cssText='grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-decoration:none;text-align:center;color:inherit;gap:5px';
     link.innerHTML='👤 كل لاعب بجواله<small>غرفة واحدة، وكل شخص يلعب باسمه</small>';
     row.appendChild(link);
   }
