@@ -19,9 +19,9 @@
   };
   const errorText = {unauthorized:'تعذر الدخول. حدّث الصفحة وحاول مرة ثانية.',room_unavailable:'الغرفة غير متاحة. تأكد من الرقم.',room_full:'الغرفة ممتلئة.',need_two_players:'انتظر دخول لاعب آخر.',not_your_turn:'الدور على لاعب آخر.',question_closed:'انتهى وقت السؤال.',already_answered:'أرسلت إجابتك بالفعل.',no_questions:'ما لقينا أسئلة مناسبة لهذه الجولة.',invalid_join:'أدخل رقم غرفة صحيح واسمك.',not_a_player:'جلستك تغيرت. ادخل الغرفة من جديد.'};
   const invitedCode=new URLSearchParams(location.search).get('room')||'';
-  let screen=/^\d{6}$/.test(invitedCode)?'join':'home', joinCode=/^\d{6}$/.test(invitedCode)?invitedCode:'', chosenAvatar=avatars[0], state=null, roomId=/^\d{6}$/.test(invitedCode)?null:sessionStorage.getItem('laffha-individual-room'), selected='', busy=false, message='', polling=null, ticking=null, lastView='', userId='';
+  let screen=/^\d{6}$/.test(invitedCode)?'join':'home', joinCode=/^\d{6}$/.test(invitedCode)?invitedCode:'', chosenAvatar=avatars[0], chosenRounds=8, state=null, roomId=/^\d{6}$/.test(invitedCode)?null:sessionStorage.getItem('laffha-individual-room'), selected='', busy=false, message='', polling=null, ticking=null, lastView='', userId='';
   const esc = v => String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const top = () => `<header class="top"><a class="brand" href="./">لفّها ✨</a><a class="back" href="./">الرجوع للعبة</a></header>`;
+  const top = () => `<header class="top"><a class="brand" href="./" aria-label="لفّها، الصفحة الرئيسية">لفّها</a><a class="back" href="./">← طرق اللعب</a></header>`;
   const err = () => message ? `<div class="error" role="alert">${esc(message)}</div>` : '';
   const button=(label,act,cls='primary',disabled=false)=>`<button class="${cls}" data-act="${act}" ${disabled?'disabled':''}>${label}</button>`;
   const playerRows=players=>`<div class="list">${players.map(p=>`<div class="person"><span class="avatar">${avatarArt(p.avatar)}</span><strong>${esc(p.display_name)}</strong><span class="score">${Number(p.score)||0} نقطة</span></div>`).join('')}</div>`;
@@ -37,13 +37,13 @@
     if(!state){
       if(screen==='home') root.innerHTML=top()+`<div class="hero center"><h1>ابدأ اللعبة</h1></div><div class="card stack center">${button('إنشاء غرفة','createForm')}${button('دخول برقم الغرفة','codeForm','secondary')}</div>`+err();
       else if(screen==='code') root.innerHTML=top()+`<div class="hero center"><h1>دخول الغرفة</h1></div><div class="card"><label class="field" for="code">رقم الغرفة</label><input id="code" class="input code-input" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" value="${esc(joinCode)}"><div class="space"></div>${button('متابعة','joinForm')}</div>`+err();
-      else root.innerHTML=top()+`<div class="hero center"><h1>${screen==='create'?'جهّز غرفتك':'اختار شكلك واسمك'}</h1></div><div class="card">${screen==='join'?`<p class="pill">الغرفة ${esc(joinCode)}</p>`:''}<label class="field" for="name">اسم اللاعب</label><input id="name" class="input" maxlength="24" placeholder="اكتب اسمك" autocomplete="nickname"><label class="field">اختر شكلك</label><div class="avatars">${avatars.map(a=>`<button class="avatar-choice ${a===chosenAvatar?'active':''}" data-avatar="${a}" aria-label="${avatarLabels[a]}" aria-pressed="${a===chosenAvatar}">${avatarArt(a)}</button>`).join('')}</div>${button(screen==='create'?'إنشاء الغرفة':'دخول الغرفة','submitForm','primary',busy)}</div>`+err();
+      else root.innerHTML=top()+`<div class="hero center"><h1>${screen==='create'?'جهّز غرفتك':'اختار شكلك واسمك'}</h1><p class="muted">${screen==='create'?'اختار اسمك وشكلك وجهّز جولات اللعب':'جهّز اسمك وشكلك وادخل التحدّي'}</p></div><div class="card">${screen==='join'?`<p class="pill">الغرفة ${esc(joinCode)}</p>`:''}<label class="field" for="name">اسم اللاعب</label><input id="name" class="input" maxlength="24" placeholder="اكتب اسمك" autocomplete="nickname"><label class="field">اختر شكلك</label><div class="avatars">${avatars.map(a=>`<button class="avatar-choice ${a===chosenAvatar?'active':''}" data-avatar="${a}" aria-label="${avatarLabels[a]}" aria-pressed="${a===chosenAvatar}">${avatarArt(a)}</button>`).join('')}</div>${screen==='create'?`<div class="rounds-field"><span class="field">عدد الجولات</span><div class="rounds-options" role="group" aria-label="عدد الجولات">${[5,8,10,15].map(n=>`<button type="button" class="round-choice ${n===chosenRounds?'active':''}" data-rounds="${n}" aria-pressed="${n===chosenRounds}">${n}</button>`).join('')}</div></div>`:''}${button(screen==='create'?'إنشاء الغرفة':'دخول الغرفة','submitForm','primary',busy)}</div>`+err();
       return;
     }
     const r=state.room, players=state.players, me=players.find(p=>p.user_id===userId), turn=players.find(p=>p.seat===r.turnIndex), category=state.question?.category, catName=categories.find(c=>c[0]===category)?.[1]||'التحدّي';
-    const header=top()+`<div class="question-top"><span class="pill">الغرفة ${esc(r.code)} · الجولة ${Math.min(r.round,r.rounds)}/${r.rounds}</span><span class="pill personal-score">${avatarArt(me?.avatar||'')} نقاطك: <b>${Number(me?.score)||0}</b></span></div>`;
+    const header=top()+`<div class="question-top"><span class="pill">الغرفة ${esc(r.code)} · ${r.phase==='lobby'?`${r.rounds} جولات`:`الجولة ${Math.min(r.round,r.rounds)}/${r.rounds}`}</span><span class="pill personal-score">${avatarArt(me?.avatar||'')} نقاطك: <b>${Number(me?.score)||0}</b></span></div>`;
     let content='';
-    if(r.phase==='lobby') content=`<div class="card center"><h1>الغرفة جاهزة!</h1><p class="muted">شارك الرقم أو خلّ أصحابك يمسحون الرمز</p><div class="big-code">${esc(r.code)}</div><div class="invite-qr" id="room-qr" aria-label="رمز QR لدخول الغرفة"></div><button class="copy-link" data-act="copyLink">نسخ رابط الدعوة</button>${playerRows(players)}${state.isHost?button('ابدأ اللعبة','start','primary',players.length<2||busy)+(players.length<2?'<p class="muted tiny">ننتظر أحد يدخل الغرفة ✨</p>':''):'<p class="muted">ننتظر صاحب الغرفة يبدأ اللعبة ✨</p>'}</div>`;
+    if(r.phase==='lobby') content=`<div class="card center"><h1>غرفتكم جاهزة!</h1><p class="muted">أرسل الرقم أو خلّ أصحابك يمسحون الرمز</p><div class="big-code">${esc(r.code)}</div><div class="invite-qr" id="room-qr" aria-label="رمز QR لدخول الغرفة"></div><button class="copy-link" data-act="copyLink">نسخ رابط الدعوة</button>${playerRows(players)}${state.isHost?button('ابدأ اللعبة','start','primary',players.length<2||busy)+(players.length<2?'<p class="muted tiny">ننتظر أحد يدخل الغرفة ✨</p>':''):'<p class="muted">ننتظر صاحب الغرفة يبدأ اللعبة ✨</p>'}</div>`;
     if(r.phase==='spin') content=`<div class="card center"><h1>اختاروا التحدّي</h1><p class="muted">ضغطة واحدة تختار فئة عشوائية</p><div class="board">${categories.map(c=>`<div class="category">${c[1]}</div>`).join('')}</div>${me?.seat===r.turnIndex?`<button class="spin" data-act="spin" ${busy?'disabled':''}>ابدأ<br>الاختيار</button>`:`<div class="spin" aria-label="بانتظار اللاعب">دور<br>${esc(turn?.display_name||'اللاعب')}</div>`}<p class="muted">كلما كانت الإجابة الصحيحة أسرع، زادت نقاطها</p></div>`;
     if(r.phase==='question'){
       const q=state.question, seconds=Math.max(0,Math.ceil((Date.parse(r.deadline)-Date.now())/1000)), opened=Date.now()>=Date.parse(r.openedAt), answered=!!state.ownAnswer;
@@ -77,7 +77,7 @@
       if(act==='submitForm'){
         const name=submittedName;
         if(!name)throw new Error('اكتب اسمك أولاً');
-        response=await call(screen==='create'?'create':'join',{name,avatar:chosenAvatar,code:joinCode});
+        response=await call(screen==='create'?'create':'join',{name,avatar:chosenAvatar,code:joinCode,rounds:chosenRounds});
         roomId=response.room.id;sessionStorage.setItem('laffha-individual-room',roomId);
       }else if(act==='answer'){
         if(!selected)return;await call('answer',{answer:selected});selected='';
@@ -87,6 +87,7 @@
   }
   async function refreshForce(){const incoming=await call('state');state=incoming;userId=incoming.userId;selected='';lastView='';render()}
   root.addEventListener('click',e=>{
+    const round=e.target.closest('[data-rounds]');if(round){chosenRounds=Number(round.dataset.rounds);root.querySelectorAll('[data-rounds]').forEach(el=>{el.classList.toggle('active',el===round);el.setAttribute('aria-pressed',String(el===round))});return}
     const avatar=e.target.closest('[data-avatar]');if(avatar){chosenAvatar=avatar.dataset.avatar;root.querySelectorAll('[data-avatar]').forEach(el=>{el.classList.toggle('active',el===avatar);el.setAttribute('aria-pressed',String(el===avatar))});return}
     const option=e.target.closest('[data-option]');if(option&&!option.disabled){selected=option.dataset.option;root.querySelectorAll('[data-option]').forEach(el=>el.classList.toggle('selected',el===option));const send=root.querySelector('[data-act="answer"]');if(send)send.disabled=false;return}
     const act=e.target.closest('[data-act]');if(act)action(act.dataset.act);
