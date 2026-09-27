@@ -8,6 +8,7 @@ create table if not exists public.individual_rooms (
   total_rounds integer not null default 8,
   turn_index integer not null default 0,
   question_id text,
+  question_options text[] not null default '{}',
   category text,
   opened_at timestamptz,
   deadline timestamptz,
