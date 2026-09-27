@@ -17,3 +17,4 @@
 .rounds-options{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
 .round-choice{background:#fff;border:2px solid #e8d9e9;border-radius:15px;min-height:52px;color:#241c33;font-weight:800}
 .round-choice.active{background:#694488;border-color:#694488;color:#fff;box-shadow:0 4px 0 #ddbd59}
+@media(max-width:520px){.avatars{grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.avatar-choice{min-height:65px}.avatar-choice svg{width:min(100%,58px)}}
