@@ -7,7 +7,7 @@ const cors = {
 };
 const reply = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { ...cors, "Content-Type": "application/json" } });
-const avatars = ["😄", "😎", "😮", "😊", "😉", "😴"];
+const avatars = ["😄", "😆", "😊", "🥰", "😎", "😉", "😮", "😬", "😟", "😠", "😌", "😴"];
 const categories = ["tv", "movies", "songs", "artists", "cartoons", "sports", "general", "countries"];
 const clean = (value: unknown, limit: number) => String(value ?? "").trim().slice(0, limit);
 const randomCode = () => String(100000 + crypto.getRandomValues(new Uint32Array(1))[0] % 900000);
