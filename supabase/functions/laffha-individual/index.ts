@@ -39,10 +39,11 @@ Deno.serve(async (request) => {
 
     if (action === "create") {
       const name = clean(input.name, 24);
+      const rounds = [5,8,10,15].includes(Number(input.rounds)) ? Number(input.rounds) : 8;
       if (!name) return reply({ error: "name_required" }, 400);
       for (let n = 0; n < 8; n++) {
         const { data, error } = await admin.from("individual_rooms")
-          .insert({ code: randomCode(), host_user_id: userId }).select("*").single();
+          .insert({ code: randomCode(), host_user_id: userId, total_rounds: rounds }).select("*").single();
         if (error?.code === "23505") continue;
         if (error) throw error;
         room = data;
