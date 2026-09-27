@@ -11,6 +11,14 @@ const avatars = ["😄", "😎", "😮", "😊", "😉", "😴"];
 const categories = ["tv", "movies", "songs", "artists", "cartoons", "sports", "general", "countries"];
 const clean = (value: unknown, limit: number) => String(value ?? "").trim().slice(0, limit);
 const randomCode = () => String(100000 + crypto.getRandomValues(new Uint32Array(1))[0] % 900000);
+const shuffle = <T>(values: T[]) => {
+  const list = [...values];
+  for (let i = list.length - 1; i > 0; i--) {
+    const j = crypto.getRandomValues(new Uint32Array(1))[0] % (i + 1);
+    [list[i], list[j]] = [list[j], list[i]];
+  }
+  return list;
+};
 
 Deno.serve(async (request) => {
   if (request.method === "OPTIONS") return new Response("ok", { headers: cors });
@@ -95,12 +103,13 @@ Deno.serve(async (request) => {
         let category = "";
         for (const candidate of randomized) {
           const { data: questions, error } = await admin.from("question_bank")
-            .select("id,category,public_payload").eq("active", true).eq("category", candidate).limit(1000);
+            .select("id,category,public_payload,correct_answer").eq("active", true).eq("category", candidate).limit(1000);
           if (error) throw error;
           const pool = (questions || []).filter((q) =>
             !room.used_question_ids.includes(q.id) &&
-            q.public_payload?.questionType === "mcq" && Array.isArray(q.public_payload?.options) &&
-            q.public_payload.options.length === 4
+            q.public_payload?.questionType === "mcq" &&
+            Array.isArray(q.public_payload?.wrongAnswers) &&
+            new Set([q.correct_answer,...q.public_payload.wrongAnswers]).size >= 4
           );
           if (pool.length) {
             selected = pool[crypto.getRandomValues(new Uint32Array(1))[0] % pool.length];
@@ -109,9 +118,12 @@ Deno.serve(async (request) => {
           }
         }
         if (!selected) return reply({ error: "no_questions" }, 409);
+        const wrong = [...new Set(selected.public_payload.wrongAnswers.map(String))]
+          .filter((x) => x !== String(selected.correct_answer)).slice(0, 3);
+        const options = shuffle([String(selected.correct_answer), ...wrong]);
         const now = Date.now();
         const { error: updateError } = await admin.from("individual_rooms").update({
-          phase: "question", category, question_id: selected.id,
+          phase: "question", category, question_id: selected.id, question_options: options,
           opened_at: new Date(now + 1800).toISOString(),
           deadline: new Date(now + 31800).toISOString(),
           used_question_ids: [...room.used_question_ids, selected.id],
@@ -135,7 +147,7 @@ Deno.serve(async (request) => {
         const { error } = await admin.from("individual_rooms").update({
           phase: nextRound > room.total_rounds ? "finished" : "spin",
           round_no: nextRound, turn_index: nextSeat, question_id: null,
-          category: null, opened_at: null, deadline: null,
+          category: null, question_options: [], opened_at: null, deadline: null,
         }).eq("id", room.id).eq("phase", "result");
         if (error) throw error;
       } else if (action !== "state") return reply({ error: "invalid_action" }, 400);
@@ -162,7 +174,7 @@ Deno.serve(async (request) => {
       question = {
         id: q.id, category: q.category,
         text: clean(q.public_payload?.questionText, 500),
-        options: Array.isArray(q.public_payload?.options) ? q.public_payload.options.map(String) : [],
+        options: refreshed.question_options || [],
         ...(refreshed.phase === "result" ? { correctAnswer: q.correct_answer } : {}),
       };
     }
