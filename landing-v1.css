@@ -13,3 +13,14 @@
 .mode-arrow{border-radius:99px;background:#694488;color:#fff;padding:9px 20px;font-size:14px;font-weight:800}
 @media(max-width:900px){.setup-controls-top{grid-template-columns:1fr!important}}
 @media(max-width:620px){.laffha-mode-home{margin-top:8vh;padding:18px 6px 35px}.mode-cards{grid-template-columns:1fr;gap:13px}.mode-card{min-height:185px;gap:9px}.mode-intro{margin-bottom:25px}.mode-symbol{font-size:33px}}
+
+/* Keep the return action and game title in separate corners on team setup. */
+.setup-reference{padding-top:76px!important}
+.setup-reference .mode-back{position:absolute;top:22px;left:28px;margin:0;z-index:3}
+.setup-reference .setup-corner-brand{top:18px!important;right:28px!important;font-size:28px!important}
+.setup-reference .setup-intro-line{line-height:1.6!important;margin:0 0 18px!important}
+@media(max-width:900px){
+  .setup-reference{padding-top:72px!important}
+  .setup-reference .mode-back{top:20px;left:16px}
+  .setup-reference .setup-corner-brand{top:17px!important;right:16px!important;font-size:23px!important}
+}
