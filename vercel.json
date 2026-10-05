@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "node tools/build-production-v62.mjs",
+  "buildCommand": "node tools/build-production-v62.mjs && node tools/apply-v77.mjs",
   "outputDirectory": "dist",
   "headers": [
     {
